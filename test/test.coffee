@@ -27,7 +27,7 @@ tests.testCreateThing = (test) ->
 
   socket.on "LiveDocumentCreate", (collection, doc, callback) ->
     process.nextTick () ->
-      callback doc
+      callback(JSON.parse(JSON.stringify(doc)))
 
   Thing.create result, (doc) ->
     test.deepEqual(doc, result, "got the wrong collection")

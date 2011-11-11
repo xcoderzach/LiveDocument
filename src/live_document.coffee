@@ -1,4 +1,3 @@
-requestNumber = 0
 module.exports = LiveDocument = (name, socket) ->
   return {
     read: (query, callback) ->
@@ -6,14 +5,8 @@ module.exports = LiveDocument = (name, socket) ->
         callback = query
         query = {}
 
-      currentRequestNumber = requestNumber++
-
-
       socket.emit "LiveDocumentRead", name, query, callback
 
     create: (document, callback) ->
-
-      currentRequestNumber = requestNumber++
-
       socket.emit "LiveDocumentCreate", name, document, callback
   }
