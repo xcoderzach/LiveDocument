@@ -22,6 +22,7 @@ tests.testRead = (test) ->
 
   Thing.read (things) ->
     test.ok things[0] instanceof Thing
+    delete things[0].document._id
     test.deepEqual things[0].document, results[0]
     test.done()
 
@@ -55,6 +56,11 @@ tests.testHasOneAssociation = (test) ->
     @one "profile"
 
   User.read {}, (users) ->
-    users[0].profile (profile) ->
+    users[0].profile.watch (profile) ->
       test.ok profile
       test.done()
+
+tests.testCreatedModelsAreAssignedIds = (test) ->
+  thing = Thing.create({derper: "herper"})
+  test.ok thing.document._id
+  test.done()
