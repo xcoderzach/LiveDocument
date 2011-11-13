@@ -9,7 +9,7 @@ socketSingleton = require "../src/socket_singleton"
 socket = newMocket()                                  
 socketSingleton.setSocket(socket)
 
-LiveDocument = require("../src/live_document")(socket)
+LiveDocument = require("../src/live_document")
 
 class Thing extends LiveDocument
 

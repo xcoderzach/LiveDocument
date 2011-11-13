@@ -4,11 +4,9 @@ Associations = require("../src/associations")
 Inflector = require "../lib/inflection"
 _ = require "../lib/underscore.js"
 
-module.exports = () ->
-
-  class LiveDocument
-    _.extend(@prototype, InstanceMethods)
-    _.extend(@, ClassMethods)
-    _.extend(@, Associations)
-    
-  return LiveDocument
+class LiveDocument
+  _.extend(@, ClassMethods)
+  _.extend(@, Associations)
+  _.extend(@prototype, InstanceMethods)
+  
+module.exports = LiveDocument
