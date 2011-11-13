@@ -5,11 +5,15 @@ newMocket = () ->
 
 module.exports = tests = {}
 
+socketSingleton = require "../src/socket_singleton"
 socket = newMocket()                                  
+socketSingleton.setSocket(socket)
 
 LiveDocument = require("../src/live_document")(socket)
 
 class Thing extends LiveDocument
+
+LiveDocument.register(Thing)
 
 
 tests.testRead = (test) ->
@@ -52,8 +56,12 @@ tests.testHasOneAssociation = (test) ->
  
   class Profile extends LiveDocument
 
+  LiveDocument.register(Profile)
+
   class User extends LiveDocument
     @one "profile"
+
+  LiveDocument.register(User)
 
   User.read {}, (users) ->
     users[0].profile.watch (profile) ->

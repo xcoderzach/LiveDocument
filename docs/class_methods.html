@@ -1,0 +1,55 @@
+<!DOCTYPE html>  <html> <head>   <title>class_methods.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="associations.html">                 associations.coffee               </a>                                           <a class="source" href="class_methods.html">                 class_methods.coffee               </a>                                           <a class="source" href="instance_methods.html">                 instance_methods.coffee               </a>                                           <a class="source" href="live_document.html">                 live_document.coffee               </a>                                           <a class="source" href="object_id.html">                 object_id.coffee               </a>                                           <a class="source" href="socket_singleton.html">                 socket_singleton.coffee               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               class_methods.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="nv">_ = </span><span class="nx">require</span> <span class="s">&quot;../lib/underscore.js&quot;</span>
+<span class="nx">_</span><span class="p">.</span><span class="nx">mixin</span><span class="p">(</span><span class="nx">require</span> <span class="s">&quot;../lib/inflection&quot;</span><span class="p">)</span>
+<span class="nv">socket = </span><span class="nx">require</span><span class="p">(</span><span class="s">&quot;../lib/socket_singleton&quot;</span><span class="p">).</span><span class="nx">getSocket</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Static methods to do common database tasks</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">module.exports = LiveDocumentClassMethods =</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p><strong>createDocumentInstance</strong> <em>private</em></p>
+
+<p>factory function to return LiveDocument instances
+from one or more json documents</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">createDocumentInstance: </span><span class="nf">(document) -&gt;</span>
+    <span class="k">if</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nb">document</span><span class="p">)</span>
+      <span class="nx">_</span><span class="p">.</span><span class="nx">map</span> <span class="nb">document</span><span class="p">,</span> <span class="p">(</span><span class="nx">doc</span><span class="p">)</span> <span class="o">=&gt;</span>
+        <span class="k">new</span> <span class="nx">@</span><span class="p">(</span><span class="nx">doc</span><span class="p">)</span>
+    <span class="k">else</span>
+      <span class="k">new</span> <span class="nx">@constructor</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">doc</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p><strong>sendReadMessage</strong> <em>private</em></p>
+
+<p>This method sends a message requesting a document or collection of
+documents to the server via socket.io or any other class that implements
+eventEmitter, when the client has received the results call callback</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">sendReadMessage: </span><span class="nf">(name, query, callback) -&gt;</span>
+    <span class="nx">socket</span><span class="p">.</span><span class="nx">emit</span> <span class="s">&quot;LiveDocumentRead&quot;</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">query</span><span class="p">,</span> <span class="nx">callback</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p><strong>sendCreateMessage</strong> <em>private</em></p>
+
+<p>This method sends a message containing new document to create to the server
+via an eventEmitter, socket, when the client has created the document it
+calls callback</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">sendCreateMessage: </span><span class="nf">(name, document, callback) -&gt;</span>
+    <span class="nx">socket</span><span class="p">.</span><span class="nx">emit</span> <span class="s">&quot;LiveDocumentCreate&quot;</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nb">document</span><span class="p">,</span> <span class="nx">callback</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p><strong>sendUpdateMessage</strong> <em>private</em></p>
+
+<p><em>query</em>: The document to update </p>
+
+<p><em>document</em>: the new keys/values to add/change</p>
+
+<p>This method sends a message to update a single document that matches query
+via an eventEmitter, socket, when the client has created the document it
+calls callback </p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">sendUpdateMessage: </span><span class="nf">(name, query, document, callback) -&gt;</span> 
+    <span class="nx">socket</span><span class="p">.</span><span class="nx">emit</span> <span class="s">&quot;LiveDocumentUpdate&quot;</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">query</span><span class="p">,</span> <span class="nb">document</span><span class="p">,</span> <span class="nx">callback</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p><strong>read</strong> <em>public</em></p>
+
+<p><em>query</em>: Conditions for the document(s) to find</p>
+
+<p><em>callback</em>: Function to call once read is complete, first argument is a
+list of documents matching query.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">read: </span><span class="nf">(query, callback) -&gt;</span>
+    <span class="k">if</span> <span class="k">typeof</span> <span class="nx">query</span> <span class="o">==</span> <span class="s">&quot;function&quot;</span>
+      <span class="nv">callback = </span><span class="nx">query</span>
+      <span class="nv">query = </span><span class="p">{}</span>
+
+    <span class="nx">@sendReadMessage</span> <span class="nx">_</span><span class="p">(</span><span class="nx">_</span><span class="p">(</span><span class="nx">@name</span><span class="p">).</span><span class="nx">pluralize</span><span class="p">()).</span><span class="nx">uncapitalize</span><span class="p">(),</span> <span class="nx">query</span><span class="p">,</span> <span class="p">(</span><span class="nx">documents</span><span class="p">)</span> <span class="o">=&gt;</span>
+      <span class="nx">callback</span> <span class="nx">@createDocumentInstance</span><span class="p">(</span><span class="nx">documents</span><span class="p">)</span>
+ </pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p><strong>create</strong> <em>public</em></p>
+
+<p><em>document</em>: Document to create</p>
+
+<p><em>callback</em>: Function to call once document is created</p>             </td>             <td class="code">               <div class="highlight"><pre> 
+  <span class="nv">create: </span><span class="nf">(document, callback) -&gt;</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">callback</span><span class="o">?</span><span class="p">)</span>
+      <span class="nv">callback = </span><span class="nf">() -&gt;</span>
+
+    <span class="nv">instance = </span><span class="k">new</span> <span class="nx">@</span><span class="p">(</span><span class="nb">document</span><span class="p">)</span> 
+    <span class="nx">socket</span><span class="p">.</span><span class="nx">emit</span> <span class="s">&quot;LiveDocumentCreate&quot;</span><span class="p">,</span> <span class="nx">Inflector</span><span class="p">.</span><span class="nx">pluralize</span><span class="p">(</span><span class="nx">Inflector</span><span class="p">.</span><span class="nx">uncapitalize</span><span class="p">(</span><span class="nx">@name</span><span class="p">)),</span> <span class="nb">document</span><span class="p">,</span> <span class="nx">callback</span>
+    <span class="k">return</span> <span class="nx">instance</span> 
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
