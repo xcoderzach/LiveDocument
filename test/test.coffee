@@ -6,7 +6,7 @@ newMocket = () ->
 module.exports = tests = {}
 
 socketSingleton = require "../src/socket_singleton"
-socket = newMocket()                                  
+socket = newMocket()
 socketSingleton.setSocket(socket)
 
 LiveDocument = require("../src/live_document")
