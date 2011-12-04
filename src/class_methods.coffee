@@ -1,3 +1,4 @@
+requestCallbackNonce = 0
 define ["underscore", "lib/inflection", "lib/socket"], (_, inflect, socket) ->
   
   _.mixin(inflect)
@@ -25,7 +26,9 @@ define ["underscore", "lib/inflection", "lib/socket"], (_, inflect, socket) ->
     # eventEmitter, when the client has received the results call callback
 
     sendReadMessage: (name, query, callback) ->
-      socket.emit "LiveDocumentRead", name, query, callback
+      socket.emit "LiveDocumentRead", name, query, requestCallbackNonce
+      socket.on "LiveDocument" + requestCallbackNonce, callback
+      requestCallbackNonce += 1
 
     # **sendCreateMessage** *private*
     #
@@ -62,7 +65,7 @@ define ["underscore", "lib/inflection", "lib/socket"], (_, inflect, socket) ->
         query = {}
 
       @sendReadMessage _(_(@name).pluralize()).uncapitalize(), query, (documents) =>
-        callback @createDocumentInstance(documents)
+        callback documents
    
     # **create** *public*
     # 
@@ -77,7 +80,6 @@ define ["underscore", "lib/inflection", "lib/socket"], (_, inflect, socket) ->
       instance = new @(document)
       @sendCreateMessage _.pluralize(_.uncapitalize(@name)), document, callback
       return instance
-
 
     register: (liveDocumentClass) ->
       classes[liveDocumentClass.name] = liveDocumentClass
