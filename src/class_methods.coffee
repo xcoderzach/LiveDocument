@@ -77,10 +77,15 @@ define ["underscore", "lib/inflection", "lib/socket"], (_, inflect, socket) ->
       if(!callback?)
         callback = () ->
 
-      instance = new @(document)
       @sendCreateMessage _.pluralize(_.uncapitalize(@name)), document, callback
       return instance
 
+    update: (query, document, callback) ->
+      if(!callback?)
+        callback = () ->
+
+      @sendUpdateMessage _.pluralize(_.uncapitalize(@name)), query, document, callback
+     
     register: (liveDocumentClass) ->
       classes[liveDocumentClass.name] = liveDocumentClass
 
