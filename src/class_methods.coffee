@@ -14,10 +14,9 @@ define ["underscore", "lib/inflection", "lib/socket"], (_, inflect, socket) ->
 
     createDocumentInstance: (document) ->
       if Array.isArray(document)
-        _.map document, (doc) =>
-          new @(doc)
+        _.map document, @createDocumentInstance
       else
-        new @constructor.create(doc)
+        new @(document)
 
     # **sendReadMessage** *private*
     #
@@ -77,8 +76,8 @@ define ["underscore", "lib/inflection", "lib/socket"], (_, inflect, socket) ->
       if(!callback?)
         callback = () ->
 
+      @createDocumentInstance document
       @sendCreateMessage _.pluralize(_.uncapitalize(@name)), document, callback
-      return instance
 
     update: (query, document, callback) ->
       if(!callback?)
