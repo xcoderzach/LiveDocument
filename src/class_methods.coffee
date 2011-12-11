@@ -1,5 +1,6 @@
 requestCallbackNonce = 0
-define ["underscore", "lib/inflection", "lib/socket"], (_, inflect, socket) ->
+define ["underscore", "lib/inflection", "lib/socket", "lib/events"], (_, inflect, socket, events) ->
+  {EventEmitter} = events 
   
   _.mixin(inflect)
   classes = {}
@@ -26,7 +27,11 @@ define ["underscore", "lib/inflection", "lib/socket"], (_, inflect, socket) ->
 
     sendReadMessage: (name, query, callback) ->
       socket.emit "LiveDocumentRead", name, query, requestCallbackNonce
-      socket.on "LiveDocument" + requestCallbackNonce, callback
+      socket.on "LiveDocument" + requestCallbackNonce, (docs) ->
+        if _.isArray(docs)
+          _.each(docs, callback)
+        else
+          callback docs
       requestCallbackNonce += 1
 
     # **sendCreateMessage** *private*
@@ -58,13 +63,12 @@ define ["underscore", "lib/inflection", "lib/socket"], (_, inflect, socket) ->
     # _callback_: Function to call once read is complete, first argument is a
     # list of documents matching query.
 
-    read: (query, callback) ->
-      if typeof query == "function"
-        callback = query
-        query = {}
+    read: (query) ->
+      emitter = new EventEmitter()
+      @sendReadMessage _(_(@name).pluralize()).uncapitalize(), query, (document) =>
+        emitter.emit "insert", document
+      return emitter
 
-      @sendReadMessage _(_(@name).pluralize()).uncapitalize(), query, (documents) =>
-        callback documents
    
     # **create** *public*
     # 
