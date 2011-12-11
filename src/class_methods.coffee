@@ -65,9 +65,21 @@ define ["underscore", "lib/inflection", "lib/socket", "lib/events"], (_, inflect
 
     read: (query) ->
       emitter = new EventEmitter()
+      collection = {
+        items: []
+        ids: {}
+      }
+      _.extend(collection, emitter)
       @sendReadMessage _(_(@name).pluralize()).uncapitalize(), query, (document) =>
-        emitter.emit "insert", document
-      return emitter
+        index = collection.ids[document._id]
+        if index?
+          collection.items[index] = document
+          collection.emit "update", document
+        else
+          collection.items.push(document)
+          collection.ids[document._id] = collection.items.length - 1
+          collection.emit "insert", document
+      return collection
 
    
     # **create** *public*
