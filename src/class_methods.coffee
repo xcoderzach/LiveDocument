@@ -1,6 +1,4 @@
-requestCallbackNonce = 0
-define ["underscore", "lib/inflection", "lib/socket", "lib/events"], (_, inflect, socket, events) ->
-  {EventEmitter} = events 
+define ["underscore", "lib/inflection", "lib/socket", "lib/LiveDocumentClient/src/live_document_collection"], (_, inflect, socket, LiveDocumentCollection) ->
   
   _.mixin(inflect)
   classes = {}
@@ -19,20 +17,7 @@ define ["underscore", "lib/inflection", "lib/socket", "lib/events"], (_, inflect
       else
         new @(document)
 
-    # **sendReadMessage** *private*
-    #
-    # This method sends a message requesting a document or collection of
-    # documents to the server via socket.io or any other class that implements
-    # eventEmitter, when the client has received the results call callback
 
-    sendReadMessage: (name, query, callback) ->
-      socket.emit "LiveDocumentRead", name, query, requestCallbackNonce
-      socket.on "LiveDocument" + requestCallbackNonce, (docs) ->
-        if _.isArray(docs)
-          _.each(docs, callback)
-        else
-          callback docs
-      requestCallbackNonce += 1
 
     # **sendCreateMessage** *private*
     #
@@ -43,6 +28,13 @@ define ["underscore", "lib/inflection", "lib/socket", "lib/events"], (_, inflect
     sendCreateMessage: (name, document, callback) ->
       socket.emit "LiveDocumentCreate", name, document, callback
 
+    # **sendDeleteMessage** *private*
+    #
+    # This method sends a message containing the query to find a document to delete
+
+    sendDeleteMessage: (name, query, callback) ->
+      socket.emit "LiveDocumentDelete", name, query, callback
+ 
     # **sendUpdateMessage** *private*
     #
     # _query_: The document to update 
@@ -64,22 +56,7 @@ define ["underscore", "lib/inflection", "lib/socket", "lib/events"], (_, inflect
     # list of documents matching query.
 
     read: (query) ->
-      emitter = new EventEmitter()
-      collection = {
-        items: []
-        ids: {}
-      }
-      _.extend(collection, emitter)
-      @sendReadMessage _(_(@name).pluralize()).uncapitalize(), query, (document) =>
-        index = collection.ids[document._id]
-        if index?
-          collection.items[index] = document
-          collection.emit "update", document
-        else
-          collection.items.push(document)
-          collection.ids[document._id] = collection.items.length - 1
-          collection.emit "insert", document
-      return collection
+      return new LiveDocumentCollection query, @name
 
    
     # **create** *public*
@@ -100,11 +77,11 @@ define ["underscore", "lib/inflection", "lib/socket", "lib/events"], (_, inflect
         callback = () ->
 
       @sendUpdateMessage _.pluralize(_.uncapitalize(@name)), query, document, callback
-     
-    register: (liveDocumentClass) ->
-      classes[liveDocumentClass.name] = liveDocumentClass
 
-    getClass: (name) ->
-      classes[name]
+    delete: (query, callback) ->
+      if(!callback?)
+        callback = () ->
+
+      @sendDeleteMessage _.pluralize(_.uncapitalize(@name)), query, callback
 
   return LiveDocumentClassMethods
