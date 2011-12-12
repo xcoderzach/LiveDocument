@@ -38,7 +38,11 @@ define ["underscore", "lib/events", "lib/socket"], (_, events, socket) ->
     handleNotification: (document, method) ->
       console.log(document, method)
       index = @ids[document._id]
-      if method == "update"
+      if method == "load"
+        @items.push(document)
+        @ids[document._id] = @items.length - 1
+        @emit "load", document
+      else if method == "update"
         @items[index] = document
         @emit "update", document
       else if method == "insert"
@@ -49,7 +53,5 @@ define ["underscore", "lib/events", "lib/socket"], (_, events, socket) ->
         @items.splice index, 1
         delete @ids[document._id]
         @emit "delete", document
-
-
 
   return LiveDocumentCollection
