@@ -36,7 +36,6 @@ define ["underscore", "lib/events", "lib/socket"], (_, events, socket) ->
     # TODO: this should at some point take sorting and limits into account!
     #
     handleNotification: (document, method) ->
-      console.log(document, method)
       index = @ids[document._id]
       if method == "load"
         @items.push(document)
