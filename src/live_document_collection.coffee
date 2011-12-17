@@ -20,11 +20,7 @@ define ["underscore", "lib/events", "lib/socket"], (_, events, socket) ->
     sendReadMessage: () ->
       socket.emit "LiveDocumentRead", _(@name).uncapitalize(), @query, requestCallbackNonce
       socket.on "LiveDocument" + requestCallbackNonce, (docs, method) =>
-        if _.isArray(docs)
-          _.each docs, (doc) =>
-            @handleNotification doc, method
-        else
-          @handleNotification docs, method
+        @handleNotification docs, method
       requestCallbackNonce += 1
 
     # **handleNotification** *private*
@@ -36,20 +32,20 @@ define ["underscore", "lib/events", "lib/socket"], (_, events, socket) ->
     # TODO: this should at some point take sorting and limits into account!
     #
     handleNotification: (document, method) ->
-      index = @ids[document._id]
       if method == "load"
-        @items.push(document)
-        @ids[document._id] = @items.length - 1
+        _.each document, (doc) =>
+          @items.push doc
+          @ids[doc._id] = @items.length - 1
         @emit "load", document
       else if method == "update"
-        @items[index] = document
+        @items[@ids[document._id]] = document
         @emit "update", document
       else if method == "insert"
         @items.push(document)
         @ids[document._id] = @items.length - 1
         @emit "insert", document
       else if method == "delete"
-        @items.splice index, 1
+        @items.splice @ids[document._id], 1
         delete @ids[document._id]
         @emit "delete", document
 
