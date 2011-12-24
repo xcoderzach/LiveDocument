@@ -1,4 +1,4 @@
-define ["underscore", "lib/inflection", "lib/socket", "lib/LiveDocumentClient/src/live_document_collection"], (_, inflect, socket, LiveDocumentCollection) ->
+define ["underscore", "lib/inflection", "lib/LiveDocumentClient/src/live_document_collection"], (_, inflect, LiveDocumentCollection) ->
   
   _.mixin(inflect)
   classes = {}
@@ -26,14 +26,14 @@ define ["underscore", "lib/inflection", "lib/socket", "lib/LiveDocumentClient/sr
     # calls callback
 
     sendCreateMessage: (name, document, callback) ->
-      socket.emit "LiveDocumentCreate", name, document, callback
+      @socket.emit "LiveDocumentCreate", name, document, callback
 
     # **sendDeleteMessage** *private*
     #
     # This method sends a message containing the query to find a document to delete
 
     sendDeleteMessage: (name, query, callback) ->
-      socket.emit "LiveDocumentDelete", name, query, callback
+      @socket.emit "LiveDocumentDelete", name, query, callback
  
     # **sendUpdateMessage** *private*
     #
@@ -46,7 +46,7 @@ define ["underscore", "lib/inflection", "lib/socket", "lib/LiveDocumentClient/sr
     # calls callback 
 
     sendUpdateMessage: (name, query, document, callback) ->
-      socket.emit "LiveDocumentUpdate", name, query, document, callback
+      @socket.emit "LiveDocumentUpdate", name, query, document, callback
 
     # **read** *public*
     # 

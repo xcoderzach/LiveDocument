@@ -1,7 +1,6 @@
 requestCallbackNonce = 0
 
-define ["underscore", "lib/events", "lib/socket"], (_, events, socket) ->
-  {EventEmitter} = events
+define ["underscore", "lib/events", "lib/socket"], (_, {EventEmitter}, socket) ->
 
   class LiveDocumentCollection extends EventEmitter
 
@@ -18,8 +17,8 @@ define ["underscore", "lib/events", "lib/socket"], (_, events, socket) ->
     # eventEmitter, when the client has received the results call callback
 
     sendReadMessage: () ->
-      socket.emit "LiveDocumentRead", _(@name).uncapitalize(), @query, requestCallbackNonce
-      socket.on "LiveDocument" + requestCallbackNonce, (docs, method) =>
+      @socket.emit "LiveDocumentRead", _(@name).uncapitalize(), @query, requestCallbackNonce
+      @socket.on "LiveDocument" + requestCallbackNonce, (docs, method) =>
         @handleNotification docs, method
       requestCallbackNonce += 1
 
@@ -48,5 +47,3 @@ define ["underscore", "lib/events", "lib/socket"], (_, events, socket) ->
         @items.splice @ids[document._id], 1
         delete @ids[document._id]
         @emit "delete", document
-
-  return LiveDocumentCollection

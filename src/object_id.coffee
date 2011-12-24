@@ -18,5 +18,3 @@ define () ->
            '000000'.substr(0, 6 - m.length) + m +
            '0000'.substr(0, 4 - p.length) + p +
            '000000'.substr(0, 6 - i.length) + i
-
-  return generateObjectId
