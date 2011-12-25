@@ -18,7 +18,8 @@ define ["underscore", "events"], (_, {EventEmitter}, inflect) ->
     
     handleNotification: (document, method) ->
       if method == "load"
-        #the load method passes in multiple documents
+        # the load method passes in multiple documents
+        # we iterate over them
         _.each document, (doc) =>
           @items.push doc
           @ids[doc._id] = @items.length - 1
