@@ -5,6 +5,7 @@ define ["underscore", "events"], (_, {EventEmitter}, inflect) ->
     constructor: (@query, name) ->
       @name = _(name).pluralize()
       @items = []
+      @loaded = false
       @ids = {}
 
     # **handleNotification** *private*
@@ -20,6 +21,7 @@ define ["underscore", "events"], (_, {EventEmitter}, inflect) ->
         _.each document, (doc) =>
           @items.push doc
           @ids[doc._id] = @items.length - 1
+        @loaded = true
         @emit "load", document
       else if method == "update"
         @items[@ids[document._id]] = document
