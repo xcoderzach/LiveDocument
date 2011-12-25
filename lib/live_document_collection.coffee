@@ -1,6 +1,4 @@
-requestCallbackNonce = 0
-
-define ["underscore", "events"], (_, {EventEmitter}) ->
+define ["underscore", "events"], (_, {EventEmitter}, inflect) ->
 
   class LiveDocumentCollection extends EventEmitter
 
@@ -8,19 +6,6 @@ define ["underscore", "events"], (_, {EventEmitter}) ->
       @name = _(name).pluralize()
       @items = []
       @ids = {}
-      @sendReadMessage()
-
-    # **sendReadMessage** *private*
-    #
-    # This method sends a message requesting a document or collection of
-    # documents to the server via socket.io or any other class that implements
-    # eventEmitter, when the client has received the results call callback
-
-    sendReadMessage: () ->
-      @socket.emit "LiveDocumentRead", _(@name).uncapitalize(), @query, requestCallbackNonce
-      @socket.on "LiveDocument" + requestCallbackNonce, (docs, method) =>
-        @handleNotification docs, method
-      requestCallbackNonce += 1
 
     # **handleNotification** *private*
     # 
@@ -29,7 +14,7 @@ define ["underscore", "events"], (_, {EventEmitter}) ->
     # event and update our instance.  Otherwise, add it to the collection
     #
     # TODO: this should at some point take sorting and limits into account!
-    #
+    
     handleNotification: (document, method) ->
       if method == "load"
         _.each document, (doc) =>

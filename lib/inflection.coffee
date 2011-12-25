@@ -1,4 +1,4 @@
-uncountableWords = [ 'equipment', 'information', 'rice', 'money', 'species', 
+uncountableWords = [ 'equipment', 'information', 'rice', 'money', 'species',
                        'series', 'fish', 'sheep', 'moose', 'deer', 'news' ]
 
 pluralRules = [
@@ -62,7 +62,6 @@ applyRules = (str, rules, skip) ->
  
      
 module.exports =
-  
   pluralize:(str) ->
     return applyRules str, pluralRules, uncountableWords
 
@@ -84,4 +83,7 @@ module.exports =
     return str.substring(0, 1).toLowerCase() + str.substring(1)
 
   dasherize: (str) ->
-    return str.replace(/\ _/g, '-');
+    return str.replace(/\ _/g, '-')
+
+if typeof define == "function"
+  define(module.exports)

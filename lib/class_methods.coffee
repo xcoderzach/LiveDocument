@@ -1,10 +1,10 @@
-define ["underscore", "cs!lib/inflection", "cs!lib/live_document_collection"], (_, inflect, LiveDocumentCollection) ->
-  
-  _.mixin(inflect)
-  classes = {}
+requestCallbackNonce = 0
 
+define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollection) ->
+  
   # Static methods to do common database tasks
   LiveDocumentClassMethods =
+    LiveDocumentCollection.socket = @socket
 
     # **createDocumentInstance** *private*
     # 
@@ -17,7 +17,17 @@ define ["underscore", "cs!lib/inflection", "cs!lib/live_document_collection"], (
       else
         new @(document)
 
+    # **sendReadMessage** *private*
+    #
+    # This method sends a message requesting a document or collection of
+    # documents to the server via socket.io or any other class that implements
+    # eventEmitter, when the client has received the results call callback
 
+    sendReadMessage: (query, callback) ->
+      @socket.emit "LiveDocumentRead", _(_(@name).uncapitalize()).pluralize(), query, requestCallbackNonce
+      @socket.on "LiveDocument" + requestCallbackNonce, (docs, method) =>
+        callback docs, method
+      requestCallbackNonce += 1
 
     # **sendCreateMessage** *private*
     #
@@ -25,15 +35,15 @@ define ["underscore", "cs!lib/inflection", "cs!lib/live_document_collection"], (
     # via an eventEmitter, socket, when the client has created the document it
     # calls callback
 
-    sendCreateMessage: (name, document, callback) ->
-      @socket.emit "LiveDocumentCreate", name, document, callback
+    sendCreateMessage: (document, callback) ->
+      @socket.emit "LiveDocumentCreate", @name, document, callback
 
     # **sendDeleteMessage** *private*
     #
     # This method sends a message containing the query to find a document to delete
 
-    sendDeleteMessage: (name, query, callback) ->
-      @socket.emit "LiveDocumentDelete", name, query, callback
+    sendDeleteMessage: (query, callback) ->
+      @socket.emit "LiveDocumentDelete", @name, query, callback
  
     # **sendUpdateMessage** *private*
     #
@@ -45,8 +55,8 @@ define ["underscore", "cs!lib/inflection", "cs!lib/live_document_collection"], (
     # via an eventEmitter, socket, when the client has created the document it
     # calls callback 
 
-    sendUpdateMessage: (name, query, document, callback) ->
-      @socket.emit "LiveDocumentUpdate", name, query, document, callback
+    sendUpdateMessage: (query, document, callback) ->
+      @socket.emit "LiveDocumentUpdate", @name, query, document, callback
 
     # **read** *public*
     # 
@@ -56,9 +66,10 @@ define ["underscore", "cs!lib/inflection", "cs!lib/live_document_collection"], (
     # list of documents matching query.
 
     read: (query) ->
-      return new LiveDocumentCollection query, @name
+      collection = new LiveDocumentCollection query, @name
+      @sendReadMessage query, collection.handleNotification
+      return collection
 
-   
     # **create** *public*
     # 
     # _document_: Document to create
@@ -71,7 +82,16 @@ define ["underscore", "cs!lib/inflection", "cs!lib/live_document_collection"], (
 
       @createDocumentInstance document
       @sendCreateMessage _.pluralize(_.uncapitalize(@name)), document, callback
-
+ 
+    # **update** *public*
+    #
+    # Important: The update methods will only update ONE document
+    # 
+    # _query_: conditions with which to find the document to update
+    # _document_: Document of updates to make
+    #
+    # _callback_: Function to call once document has been updated
+ 
     update: (query, document, callback) ->
       if(!callback?)
         callback = () ->
@@ -83,5 +103,3 @@ define ["underscore", "cs!lib/inflection", "cs!lib/live_document_collection"], (
         callback = () ->
 
       @sendDeleteMessage _.pluralize(_.uncapitalize(@name)), query, callback
-
-  return LiveDocumentClassMethods

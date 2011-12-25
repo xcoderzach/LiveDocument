@@ -1,6 +1,6 @@
 requirejs = require 'requirejs'
 
 requirejs.config { nodeRequire: require, baseUrl: __dirname}
-requirejs ['cs!lib/live_document'],(LiveDocument) ->
-  return LiveDocument
+requirejs ["cs!lib/live_document"],(LiveDocument) ->
+  module.exports = LiveDocument
 
