@@ -29,7 +29,18 @@ error messages.  Error messages belong in the view.
   
 ###Example
 
-  LiveDocument
-    @key "title" { length: [3...24] }
-    @key "description" { max: 140 }
+In coffeescript
+```coffeescript
+class Task extends LiveDocument
+  @key "title", { length: [3...24] }
+  @key "description", { max: 140 }
+```
+In JavaScript
+```javascript
+var Task = new LiveDocument("task")
+  .key("title", { length: [3...24] })
+  .key("description", { max: 140 })
+```
 
+  All of the declarative LiveDocument class methods, return this, allowing you
+to chain them together.

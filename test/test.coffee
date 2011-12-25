@@ -9,12 +9,16 @@ echoRead = (Document, expected) ->
 describe "LiveDocument", ->
   class Thing extends LiveDocument
     @socket = new EventEmitter()
+
+    @key "title", { length: [3...24] }
+    @key "description", { max: 140 }
+
   beforeEach ->
     # clean out all of the old listeners from previous tests 
+
     Thing.socket = new EventEmitter()
   describe ".read()", ->
     describe "with no conditions", ->
-
 
       it "should send a read message", (done) ->
         Thing.socket.on "LiveDocumentRead", (name, query, requestNumber) ->
@@ -35,6 +39,10 @@ describe "LiveDocument", ->
         things.on "load", (docs) ->
           docs.should.equal expected
           done()
+  
+      it "should call an update event when one of it's documents is updated"
+        
+
 
       it "should set the loaded attribute on the collection", (done) ->
         expected  = [ {title: "A title", description: "w00t describing"} ]
@@ -45,4 +53,10 @@ describe "LiveDocument", ->
           things.loaded.should.equal true
           done()
 
+  describe "create a record", ->
+    describe "that is valid", ->
+      it "should not send a create message"
 
+    describe "that does not validate", ->
+      it "should not send a create message"
+      it "should call the callback with an array of broken fields"

@@ -104,3 +104,15 @@ define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollec
         callback = () ->
 
       @sendDeleteMessage _.pluralize(_.uncapitalize(@name)), query, callback
+
+
+    # **key** *public* 
+    #
+    # The key method is called at declaration time. It defines which keys are
+    # valid for documents of this type
+    #
+    # _name_: the name of the key
+    #
+    # _properties_: validations and other rules pertaining to the key
+
+    key: (name, properties) ->
