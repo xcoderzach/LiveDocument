@@ -66,6 +66,7 @@ define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollec
     # list of documents matching query.
 
     read: (query) ->
+      query ?= {}
       collection = new LiveDocumentCollection query, @name
       @sendReadMessage query, collection.handleNotification
       return collection
