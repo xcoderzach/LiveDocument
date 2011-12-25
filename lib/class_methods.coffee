@@ -68,7 +68,7 @@ define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollec
     read: (query) ->
       query ?= {}
       collection = new LiveDocumentCollection query, @name
-      @sendReadMessage query, collection.handleNotification
+      @sendReadMessage query, _.bind(collection.handleNotification, collection)
       return collection
 
     # **create** *public*
