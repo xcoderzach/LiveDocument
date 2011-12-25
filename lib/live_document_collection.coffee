@@ -1,6 +1,6 @@
 requestCallbackNonce = 0
 
-define ["underscore", "lib/events", "lib/socket"], (_, {EventEmitter}, socket) ->
+define ["underscore", "events"], (_, {EventEmitter}) ->
 
   class LiveDocumentCollection extends EventEmitter
 

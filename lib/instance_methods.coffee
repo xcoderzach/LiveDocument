@@ -1,4 +1,4 @@
-define ["underscore", "lib/inflection", "lib/socket", "lib/LiveDocumentClient/src/object_id"], (_, inflect, socket, generateObjectId) ->
+define ["underscore", "cs!lib/inflection", "cs!lib/object_id"], (_, inflect, generateObjectId) ->
   _.mixin(inflect)
 
   LiveDocumentInstanceMethods =

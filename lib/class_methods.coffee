@@ -1,4 +1,4 @@
-define ["underscore", "lib/inflection", "lib/LiveDocumentClient/src/live_document_collection"], (_, inflect, LiveDocumentCollection) ->
+define ["underscore", "cs!lib/inflection", "cs!lib/live_document_collection"], (_, inflect, LiveDocumentCollection) ->
   
   _.mixin(inflect)
   classes = {}
