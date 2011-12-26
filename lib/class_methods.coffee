@@ -17,6 +17,9 @@ define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollec
       else
         new @(document)
 
+    collectionName: () ->
+      _.uncapitalize _.pluralize @name
+
     # **sendReadMessage** *private*
     #
     # This method sends a message requesting a document or collection of
@@ -24,7 +27,7 @@ define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollec
     # eventEmitter, when the client has received the results call callback
 
     sendReadMessage: (query, callback) ->
-      @socket.emit "LiveDocumentRead", _(_(@name).uncapitalize()).pluralize(), query, requestCallbackNonce
+      @socket.emit "LiveDocumentRead", @collectionName(), query, requestCallbackNonce
       @socket.on "LiveDocument" + requestCallbackNonce, (docs, method) =>
         callback docs, method
       requestCallbackNonce += 1
@@ -36,14 +39,14 @@ define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollec
     # calls callback
 
     sendCreateMessage: (document, callback) ->
-      @socket.emit "LiveDocumentCreate", @name, document, callback
+      @socket.emit "LiveDocumentCreate", @collectionName(), document, callback
 
     # **sendDeleteMessage** *private*
     #
     # This method sends a message containing the query to find a document to delete
 
     sendDeleteMessage: (query, callback) ->
-      @socket.emit "LiveDocumentDelete", @name, query, callback
+      @socket.emit "LiveDocumentDelete", @collectionName(), query, callback
  
     # **sendUpdateMessage** *private*
     #
@@ -56,7 +59,7 @@ define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollec
     # calls callback 
 
     sendUpdateMessage: (query, document, callback) ->
-      @socket.emit "LiveDocumentUpdate", @name, query, document, callback
+      @socket.emit "LiveDocumentUpdate", @collectionName(), query, document, callback
 
     # **read** *public*
     # 
@@ -67,7 +70,7 @@ define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollec
 
     read: (query) ->
       query ?= {}
-      collection = new LiveDocumentCollection query, @name
+      collection = new LiveDocumentCollection query, @collectionName()
       @sendReadMessage query, _.bind(collection.handleNotification, collection)
       return collection
 
@@ -82,7 +85,7 @@ define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollec
         callback = () ->
 
       @createDocumentInstance document
-      @sendCreateMessage _.pluralize(_.uncapitalize(@name)), document, callback
+      @sendCreateMessage document, callback
  
     # **update** *public*
     #
@@ -97,14 +100,13 @@ define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollec
       if(!callback?)
         callback = () ->
 
-      @sendUpdateMessage _.pluralize(_.uncapitalize(@name)), query, document, callback
+      @sendUpdateMessage @collectionName(), query, document, callback
 
     delete: (query, callback) ->
       if(!callback?)
         callback = () ->
 
-      @sendDeleteMessage _.pluralize(_.uncapitalize(@name)), query, callback
-
+      @sendDeleteMessage @collectionName(), query, callback
 
     # **key** *public* 
     #

@@ -2,8 +2,7 @@ define ["underscore", "events"], (_, {EventEmitter}, inflect) ->
 
   class LiveDocumentCollection extends EventEmitter
 
-    constructor: (@query, name) ->
-      @name = _(name).pluralize()
+    constructor: (@query) ->
       @items = []
       @loaded = false
       @ids = {}
