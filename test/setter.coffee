@@ -41,3 +41,10 @@ describe "LiveDocument", ->
       # This test brings up the interesting world of merging!
       it "should not get its value overwritten by an incoming update"
 
+      it "should be saved when save is called", (done) ->
+        thing = new Thing
+        thing.set {title: "w000t", description: "My Description"}
+        thing.save ->
+          thing.get("title").should.equal "w000t"
+          thing.get("description").should.equal "My Description"
+          done()

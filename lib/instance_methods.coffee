@@ -4,6 +4,7 @@ define ["underscore", "cs!lib/object_id"], (_, generateObjectId) ->
     constructor: (@document) ->
       @document ?= {}
       @deleted = false
+      @persisted = false
       if !@document._id
         @name = @constructor.name
         @collectionName = _.pluralize(_.uncapitalize(@name))
@@ -15,6 +16,18 @@ define ["underscore", "cs!lib/object_id"], (_, generateObjectId) ->
         @deleted = true
         @set(doc)
         @emit "delete", @
+
+    save: (cb) ->
+      if @persisted == false
+        @constructor.sendCreateMessage @document, () =>
+          cb(@)
+      else
+        doc = _.clone(@document)
+        delete doc._id
+        @constructor.sendUpdateMessage {_id: @document._id }, doc, () =>
+          cb(@)
+
+    
  
     get: (field) ->
       @document[field]
