@@ -27,7 +27,7 @@ Table of Contents
 Example
 -------
 
-  In coffeescript:
+In coffeescript:
 
 ```coffeescript
 class Task extends LiveDocument

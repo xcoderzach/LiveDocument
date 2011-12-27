@@ -58,18 +58,23 @@ describe "LiveDocument", ->
       it "should set the loaded attribute on the collection", (done) ->
         expected = {title: "A title", description: "w00t describing"}
         Thing.create expected
-        doneTimes = 0
         things = Thing.read {}, (thngs) ->
-          things.loaded.should.equal true
-          things.should.equal(thngs)
-          doneTimes += 1
-          if doneTimes == 2
-            done()
 
+          things.should.equal thngs
+
+          thngs.loaded.should.equal true
+          thngs.should.equal(thngs)
+          done()
+
+      it "should fire the load event on the collection", (done) ->
+        expected = {title: "A title", description: "w00t describing"}
+        Thing.create expected
+        things = Thing.read {}
         things.loaded.should.equal false
         things.on "load", (thngs) ->
+
+          things.should.equal thngs
+
           things.should.equal(thngs)
           things.loaded.should.equal true
-          doneTimes += 1
-          if doneTimes == 2
-            done()
+          done()
