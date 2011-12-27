@@ -4,18 +4,6 @@ define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollec
   
   # Static methods to do common database tasks
   LiveDocumentClassMethods =
-    LiveDocumentCollection.socket = @socket
-
-    # **createDocumentInstance** *private*
-    # 
-    # factory function to return LiveDocument instances
-    # from one or more json documents
-
-    createDocumentInstance: (document) ->
-      if Array.isArray(document)
-        _.map document, @createDocumentInstance
-      else
-        new @(document)
 
     collectionName: () ->
       _.uncapitalize _.pluralize @name
@@ -84,8 +72,8 @@ define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollec
       if(!callback?)
         callback = () ->
 
-      @createDocumentInstance document
       @sendCreateMessage document, callback
+      new @(document)
  
     # **update** *public*
     #
