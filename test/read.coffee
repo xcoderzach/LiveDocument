@@ -40,7 +40,6 @@ describe "LiveDocument", ->
         Thing.read()
 
 
-
       it "should call the load event when it gets the results", (done) ->
         expected  = [ {title: "A title", description: "w00t describing"}
                     , {title: "A title 2", description: "w00t describing 2"} ]
@@ -50,6 +49,7 @@ describe "LiveDocument", ->
           docs.should.equal expected
           done()
   
+
       it "should fire an insert event when a document is inserted"
       it "should fire an remove event when a document is removed"
        

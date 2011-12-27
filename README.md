@@ -64,6 +64,10 @@ task.get "priority", view.set
 # this binds all properties
 task.get view.set
 
+task.set "key", value
+task.set {key: value, key2: val2}
+
+
 # mongodb style queries, if it"s supported by mongo, we should support it (not
 # true atm!)
 

@@ -12,7 +12,11 @@ define ["underscore", "cs!lib/object_id"], (_, generateObjectId) ->
       @document[field]
 
     set: (field, value) ->
-      @document[field] = value
+      if typeof field == "object"
+        _.each field, (v, k) =>
+          @set(k, v)
+      else
+        @document[field] = value
 
     watch: (callback) ->
       @constructor.sendReadMessage @collectionName, @document, (docs) ->

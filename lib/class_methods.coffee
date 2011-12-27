@@ -88,7 +88,11 @@ define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollec
       if(!callback?)
         callback = () ->
 
-      @sendUpdateMessage query, document, () =>
+      instance = new @(query)
+      @sendUpdateMessage query, document, (document) =>
+        instance.set(document)
+        callback(instance)
+      instance
 
 
     delete: (query, callback) ->
