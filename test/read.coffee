@@ -46,20 +46,34 @@ describe "LiveDocument", ->
         echoRead(expected)
         things = Thing.read()
         things.on "load", (docs) ->
-          docs.should.equal expected
+          docs.at(0).get("title").should.equal expected[0].title
+          docs.at(0).get("description").should.equal expected[0].description
+
+          docs.at(1).get("title").should.equal expected[1].title
+          docs.at(1).get("description").should.equal expected[1].description
           done()
   
 
       it "should fire an insert event when a document is inserted"
-      it "should fire an remove event when a document is removed"
-       
+      it "should fire a remove event when a document is removed"
+
 
       it "should set the loaded attribute on the collection", (done) ->
         expected = [ {title: "A title", description: "w00t describing"} ]
         echoRead(expected)
-        things = Thing.read()
-        things.loaded.should.equal false
-        things.on "load", ->
+        doneTimes = 0
+        things = Thing.read {}, (thngs) ->
           things.loaded.should.equal true
-          done()
+          things.should.equal(thngs)
+          doneTimes += 1
+          if doneTimes == 2
+            done()
+
+        things.loaded.should.equal false
+        things.on "load", (thngs) ->
+          things.should.equal(thngs)
+          things.loaded.should.equal true
+          doneTimes += 1
+          if doneTimes == 2
+            done()
    

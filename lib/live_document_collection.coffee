@@ -2,10 +2,13 @@ define ["underscore", "events"], (_, {EventEmitter}, inflect) ->
 
   class LiveDocumentCollection extends EventEmitter
 
-    constructor: (@query) ->
+    constructor: (@query, @LiveDocumentClass) ->
       @items = []
       @loaded = false
       @ids = {}
+
+    at: (index) ->
+      return @items[index]
 
     # **handleNotification** *private*
     # 
@@ -20,18 +23,20 @@ define ["underscore", "events"], (_, {EventEmitter}, inflect) ->
         # the load method passes in multiple documents
         # we iterate over them
         _.each document, (doc) =>
+          doc = new @LiveDocumentClass(doc)
           @items.push doc
-          @ids[doc._id] = @items.length - 1
+          @ids[doc.get("_id")] = @items.length - 1
         @loaded = true
-        @emit "load", document
+        @emit "load", this
       else if method == "update"
-        @items[@ids[document._id]] = document
-        @emit "update", document
-      else if method == "insert"
-        @items.push(document)
-        @ids[document._id] = @items.length - 1
-        @emit "insert", document
-      else if method == "delete"
-        @items.splice @ids[document._id], 1
-        delete @ids[document._id]
-        @emit "delete", document
+          doc = @items[@ids[document.get("_id")]].set(document)
+          @emit "update", doc
+        else if method == "insert"
+          document = new @LiveDocumentClass(document)
+          @items.push(document)
+          @ids[document.get("_id")] = @items.length - 1
+          @emit "insert", document
+        else if method == "delete"
+          oldDoc = @items.splice(@ids[document.get("_id")], 1)[0]
+          delete @ids[oldDoc.get("_id")]
+          @emit "delete", oldDoc

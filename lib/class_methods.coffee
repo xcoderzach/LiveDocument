@@ -56,10 +56,12 @@ define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollec
     # _callback_: Function to call once read is complete, first argument is a
     # list of documents matching query.
 
-    read: (query) ->
+    read: (query, callback) ->
       query ?= {}
-      collection = new LiveDocumentCollection query, @collectionName()
+      callback ?= ->
+      collection = new LiveDocumentCollection query, @
       @sendReadMessage query, _.bind(collection.handleNotification, collection)
+      collection.on "load", callback
       return collection
 
     # **create** *public*
