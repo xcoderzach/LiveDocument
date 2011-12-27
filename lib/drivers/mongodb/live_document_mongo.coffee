@@ -29,20 +29,27 @@ define ["cs!lib/drivers/mongodb/conditional_matcher", "cs!lib/drivers/mongodb/da
           callbacks.push callback
       return callbacks
 
+    # Watches a particular id for updates or deletes
+    #
+    # I have no idea how to make this GC atm, meh
+
     watchId: (id) ->
-      cb = (document) =>
-        @socket.emit("LiveDocumentUpdate" + id, document)
+      cb = (document, type) =>
+        @socket.emit("LiveDocument" + _.capitalize(type) + id, document)
       if Array.isArray(LiveDocumentMongo.ids[id])
         LiveDocumentMongo.ids[id].push cb
       else
         LiveDocumentMongo.ids[id] = [cb]
 
+    # Stop watching an id, right now this makes EVERYONE stop watching
+    # this should only be called if you delete the document
     unwatchId: (id) ->
       delete LiveDocumentMongo.ids[id]
 
-    notifyById: (id, newDoc) ->
+    # Notifies everyone who cares about doc id, sends them newDoc
+    notifyById: (id, newDoc, type) ->
       _(LiveDocumentMongo.ids[id]).each (cb) ->
-        cb(newDoc)
+        cb(newDoc, type)
 
     # notifies an array of _listeners_ notifying them that
     # _event_ happened to _document_
@@ -89,7 +96,7 @@ define ["cs!lib/drivers/mongodb/conditional_matcher", "cs!lib/drivers/mongodb/da
         #notify the updater
         callback newDocument
         
-        @notifyById(newDocument._id, newDocument)
+        @notifyById(newDocument._id, newDocument, "update")
 
         oldListeners = @matchingListeners oldDocument
         newListeners = @matchingListeners newDocument
@@ -109,6 +116,7 @@ define ["cs!lib/drivers/mongodb/conditional_matcher", "cs!lib/drivers/mongodb/da
     
     handleDeleteMessage: (collection, conditions, callback) ->
       @db.delete collection, conditions, (document) =>
+        @notifyById(document._id, document, "delete")
         @unwatchId(document._id)
         @notifyMatchingListeners document, "delete"
         callback document

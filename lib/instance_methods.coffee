@@ -3,6 +3,7 @@ define ["underscore", "cs!lib/object_id"], (_, generateObjectId) ->
   LiveDocumentInstanceMethods =
     constructor: (@document) ->
       @document ?= {}
+      @deleted = false
       if !@document._id
         @name = @constructor.name
         @collectionName = _.pluralize(_.uncapitalize(@name))
@@ -10,7 +11,11 @@ define ["underscore", "cs!lib/object_id"], (_, generateObjectId) ->
       @constructor.socket.on "LiveDocumentUpdate" + @get("_id"), (doc) =>
         @set(doc)
         @emit "update", @
-
+      @constructor.socket.on "LiveDocumentDelete" + @get("_id"), (doc) =>
+        @deleted = true
+        @set(doc)
+        @emit "delete", @
+ 
     get: (field) ->
       @document[field]
 
