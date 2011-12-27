@@ -100,7 +100,9 @@ define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollec
         callback(instance)
       return instance
 
-
+    # **delete** *public*
+    #
+    # delete deletes a single document, and calls callback when finished
     delete: (query, callback) ->
       if(!callback?)
         callback = () ->

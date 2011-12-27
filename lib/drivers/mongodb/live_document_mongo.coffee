@@ -1,8 +1,9 @@
 define ["cs!lib/drivers/mongodb/conditional_matcher", "cs!lib/drivers/mongodb/database_methods", "underscore"], (ConditionMatcher, DatabaseMethods, _) ->
  
   class LiveDocumentMongo
-
+    # these should both have limitations, to prevent DOS
     @listeners: []
+    @ids = {}
 
     # Takes in a "socket", or any EventEmitter, and a mongodb database connection
     # and listens for updates on the socket
@@ -11,15 +12,14 @@ define ["cs!lib/drivers/mongodb/conditional_matcher", "cs!lib/drivers/mongodb/da
       @db = DatabaseMethods connection
       @setSocket socket
 
-    # Takes in a document and finds all the listeners who would like to be
-    # notified about it
-    
     setSocket: (@socket) ->
       @socket.on "LiveDocumentCreate", @handleCreateMessage.bind(@)
       @socket.on "LiveDocumentRead", @handleReadMessage.bind(@)
       @socket.on "LiveDocumentUpdate", @handleUpdateMessage.bind(@)
       @socket.on "LiveDocumentDelete", @handleDeleteMessage.bind(@)
        
+    # Takes in a document and finds all the listeners who would like to be
+    # notified about it
     
     matchingListeners: (document) ->
       callbacks = []
@@ -28,6 +28,21 @@ define ["cs!lib/drivers/mongodb/conditional_matcher", "cs!lib/drivers/mongodb/da
         if ConditionMatcher.match(document, conditions)
           callbacks.push callback
       return callbacks
+
+    watchId: (id) ->
+      cb = (document) =>
+        @socket.emit("LiveDocumentUpdate" + id, document)
+      if Array.isArray(LiveDocumentMongo.ids[id])
+        LiveDocumentMongo.ids[id].push cb
+      else
+        LiveDocumentMongo.ids[id] = [cb]
+
+    unwatchId: (id) ->
+      delete LiveDocumentMongo.ids[id]
+
+    notifyById: (id, newDoc) ->
+      _(LiveDocumentMongo.ids[id]).each (cb) ->
+        cb(newDoc)
 
     # notifies an array of _listeners_ notifying them that
     # _event_ happened to _document_
@@ -50,6 +65,7 @@ define ["cs!lib/drivers/mongodb/conditional_matcher", "cs!lib/drivers/mongodb/da
     handleCreateMessage: (collection, document, callback) ->
       @db.create collection, document, () =>
         @notifyMatchingListeners document, "insert"
+        @watchId(document._id)
         callback document
 
     # When we get a read message, get the contents out of the database
@@ -61,6 +77,8 @@ define ["cs!lib/drivers/mongodb/conditional_matcher", "cs!lib/drivers/mongodb/da
         cb = (document, method) =>
           @socket.emit "LiveDocument" + requestNumber, document, method
         cb(arr, "load")
+        _(arr).each (doc) =>
+          @watchId(doc._id)
         LiveDocumentMongo.listeners.push { callback: cb, conditions: conditions }
                                    
     # When we get an update message, update the document, notify the updater
@@ -71,15 +89,11 @@ define ["cs!lib/drivers/mongodb/conditional_matcher", "cs!lib/drivers/mongodb/da
         #notify the updater
         callback newDocument
         
+        @notifyById(newDocument._id, newDocument)
+
         oldListeners = @matchingListeners oldDocument
         newListeners = @matchingListeners newDocument
 
-        # Documents whose conditions matched the oldDocument and the newDocument
-        # get update notifications
-        #
-        # We should probably send update notices for each document individually
-        # the collection shouldn't handle a document being updated
-        updateNotifications = _.intersection oldListeners, newListeners
         # Documents whose conditions are in oldListeners but not newListeners
         # get remove notifications
         removeNotifications = _(oldListeners).difference newListeners
@@ -87,7 +101,6 @@ define ["cs!lib/drivers/mongodb/conditional_matcher", "cs!lib/drivers/mongodb/da
         # get insert notifications
         insertNotifications = _(newListeners).difference oldListeners
 
-        @notifyListeners updateNotifications, newDocument, "update"
         @notifyListeners removeNotifications, oldDocument, "delete"
         @notifyListeners insertNotifications, newDocument, "insert"
                                      
@@ -96,5 +109,6 @@ define ["cs!lib/drivers/mongodb/conditional_matcher", "cs!lib/drivers/mongodb/da
     
     handleDeleteMessage: (collection, conditions, callback) ->
       @db.delete collection, conditions, (document) ->
+        @unwatchId(document._id)
         @notifyMatchingListeners document, "delete"
         callback document

@@ -27,7 +27,7 @@ describe "LiveDocument", ->
 
   describe ".update()", ->
     
-    it "should send an update a document", (done) ->
+    it "should update a document", (done) ->
       doc = {title: "A title", description: "w00t describd"}
       Thing.create doc, (thing) ->
         id = thing.get("_id")
@@ -35,3 +35,14 @@ describe "LiveDocument", ->
           newDoc.get("title").should.equal "new Title"
           newDoc.get("description").should.equal doc.description
           done()
+
+    it "should update other instances of the document", (done) ->
+      doc = {title: "A title", description: "w00t describd"}
+      Thing.create doc, (thing) ->
+        id = thing.get("_id")
+        thing.on "update", (newDoc) ->
+          newDoc.get("title").should.equal "new Title"
+          newDoc.get("description").should.equal doc.description
+          done()
+
+        Thing.update {_id: id}, {title: "new Title"}
