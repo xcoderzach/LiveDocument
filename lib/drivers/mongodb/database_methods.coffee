@@ -64,7 +64,7 @@ define () ->
                 catch e
                   console.log e.stack
           catch e
-            console.log e
+            console.log e.stack
 
       # **delete** *private* 
       #
@@ -83,4 +83,4 @@ define () ->
             else
               callback doc
           catch e
-            console.log e
+            console.log e.stack

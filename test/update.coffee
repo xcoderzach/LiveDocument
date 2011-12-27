@@ -1,43 +1,37 @@
-{ EventEmitter } = require "events"
-LiveDocument     = require "../index.coffee"
-assert           = require "assert"
-_                = require "underscore"
+{ EventEmitter }      = require "events"
+{ LiveDocument
+, LiveDocumentMongo } = require "../index.coffee"
+assert                = require "assert"
+Mongolian             = require "mongolian"
+_                     = require "underscore"
+
+db = new Mongolian("localhost/LiveDocumentTestDB")
 
 class Thing extends LiveDocument
-  @socket = new EventEmitter()
 
-  @key "title", { length: [3...24] }
-  @key "description", { max: 140, required: true }
- 
+  @socket = new EventEmitter
+
+  @key "title", { length: [3...24], required: true }
+  @key "description", { max: 140 }
+
+liveDocumentMongo = new LiveDocumentMongo(new EventEmitter, db)
+
 describe "LiveDocument", ->
-  beforeEach ->
+  beforeEach (done) ->
     # clean out all of the old listeners from previous tests 
-    Thing.socket = new EventEmitter()
+    socket = new EventEmitter
+    Thing.socket = socket
+    liveDocumentMongo.setSocket(socket)
+    db.collection("things").remove {}, (err) ->
+      done()
 
   describe ".update()", ->
     
-    it "should send an update message", (done) ->
-      conditions = {_id: "12341234dfsasdf"}
+    it "should send an update a document", (done) ->
       doc = {title: "A title", description: "w00t describd"}
-      Thing.socket.on "LiveDocumentUpdate", (name, query, document, callback) ->
-        name.should.equal "things"
-        query.should.eql conditions
-        document.should.eql doc
-        done()
-      doc = Thing.update(conditions, doc)
-      
-
-    it "create a LiveDocument instance with the response", (done) ->
-      conditions = {_id: "12341234dfsasdf"}
-      updateDoc = {title: "A title", description: "w00t describd"}
-      Thing.socket.on "LiveDocumentUpdate", (name, query, document, callback) ->
-        process.nextTick ->
-          callback(_.extend({}, query, document))
-
-      document = Thing.update conditions, updateDoc, (doc) ->
-        (doc instanceof Thing).should.equal(true)
-        doc.get("title").should.equal(updateDoc.title)
-        doc.get("description").should.equal(updateDoc.description)
-        doc.get("_id").should.equal(conditions._id)
-        done()
-      (document instanceof Thing).should.equal(true)
+      Thing.create doc, (thing) ->
+        id = thing.get("_id")
+        Thing.update {_id: id}, {title: "new Title"}, (newDoc) ->
+          newDoc.get("title").should.equal "new Title"
+          newDoc.get("description").should.equal doc.description
+          done()

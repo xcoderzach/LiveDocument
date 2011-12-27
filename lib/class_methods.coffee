@@ -47,7 +47,7 @@ define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollec
     # calls callback 
 
     sendUpdateMessage: (query, document, callback) ->
-      @socket.emit "LiveDocumentUpdate", @collectionName(), query, document, callback
+      @socket.emit "LiveDocumentUpdate", @collectionName(), query, {$set: document}, callback
 
     # **read** *public*
     # 
@@ -76,7 +76,9 @@ define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollec
 
       doc = new @(document)
       
-      @sendCreateMessage doc.document, callback
+      @sendCreateMessage doc.document, (document) ->
+        doc.set(document)
+        callback(doc)
       return doc
  
     # **update** *public*
@@ -92,11 +94,12 @@ define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollec
       if(!callback?)
         callback = () ->
 
-      instance = new @(query)
+      instance = new @()
       @sendUpdateMessage query, document, (document) =>
         instance.set(document)
+        console.log(instance)
         callback(instance)
-      instance
+      return instance
 
 
     delete: (query, callback) ->
