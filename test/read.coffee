@@ -40,6 +40,7 @@ describe "LiveDocument", ->
         Thing.read()
 
 
+
       it "should call the load event when it gets the results", (done) ->
         expected  = [ {title: "A title", description: "w00t describing"}
                     , {title: "A title 2", description: "w00t describing 2"} ]
@@ -49,16 +50,9 @@ describe "LiveDocument", ->
           docs.should.equal expected
           done()
   
-      it "should fire an update event when one of it's documents is updated", (done) ->
-        expected  = [ {title: "A title", description: "w00t describing"}
-                    , {title: "A title 2", description: "w00t describing 2"} ]
-        newDoc = {title: "A new title"}
-        echoRead(expected)
-        things = Thing.read()
-        things.on "load", (docs) ->
-          docs.should.equal expected
-          done()
-        
+      it "should fire an insert event when a document is inserted"
+      it "should fire an remove event when a document is removed"
+       
 
       it "should set the loaded attribute on the collection", (done) ->
         expected = [ {title: "A title", description: "w00t describing"} ]

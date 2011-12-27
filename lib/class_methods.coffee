@@ -88,13 +88,14 @@ define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollec
       if(!callback?)
         callback = () ->
 
-      @sendUpdateMessage @collectionName(), query, document, callback
+      @sendUpdateMessage query, document, () =>
+
 
     delete: (query, callback) ->
       if(!callback?)
         callback = () ->
 
-      @sendDeleteMessage @collectionName(), query, callback
+      @sendDeleteMessage query, callback
 
     # **key** *public* 
     #
