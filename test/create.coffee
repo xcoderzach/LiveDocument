@@ -8,16 +8,23 @@ db = new Mongolian("localhost/LiveDocumentTestDB")
 
 
 class Thing extends LiveDocument
+
   @socket = new EventEmitter
+
   @key "title", { length: [3...24] }
   @key "description", { max: 140, required: true }
+
+liveDocumentMongo = new LiveDocumentMongo(new EventEmitter, db)
 
 describe "LiveDocument", ->
   beforeEach ->
     # clean out all of the old listeners from previous tests 
     socket = new EventEmitter
     Thing.socket = socket
-    new LiveDocumentMongo(socket, db)
+    liveDocumentMongo.setSocket(socket)
+    db.collection("things").remove {}, (err) ->
+      done()
+ 
 
   describe ".create()", ->
     describe "that is valid", ->
@@ -32,7 +39,27 @@ describe "LiveDocument", ->
         document = { title: "w00t", description: "w00t w00t" }
         thing = Thing.create document
         (typeof thing.get("_id")).should.equal "string"
- 
+
+      it "should send an insert message to a collection to which it fits", (done) ->
+        things = Thing.read {priority: {$lt: 10}}
+        things.length.should.equal 0
+        things.on "insert", ->
+          things.length.should.equal 1
+          done()
+        Thing.create { title: "herp derp", priority: 5 }
+
+      it "should not send an insert message to a collection to which it doesn't fits", (done) ->
+        things = Thing.read {priority: {$lt: 10}}
+        things.length.should.equal 0
+  
+        things.on "insert", ->
+          assert.fail("shouldn't insert")
+
+        Thing.create { title: "herp derp", priority: 11 }, ->
+          process.nextTick ->
+            things.length.should.equal 0
+            done()
+
     describe "that does not validate", ->
       describe "because it is missing a required field", ->
         it "should not send a create message"

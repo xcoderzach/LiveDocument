@@ -55,9 +55,6 @@ describe "LiveDocument", ->
                 done()
 
 
-      it "should fire an insert event when a document is inserted"
-      it "should fire a remove event when a document is removed"
-
       it "should set the loaded attribute on the collection", (done) ->
         expected = {title: "A title", description: "w00t describing"}
         Thing.create expected
