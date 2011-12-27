@@ -8,14 +8,15 @@ define ["underscore", "events"], (_, {EventEmitter}, inflect) ->
       @ids = {}
       @length = @items.length
 
+    # returns the item at position _index_ in the collection
     at: (index) ->
-      return @items[index]
+      return @ids[@items[index]]
 
     # **handleNotification** *private*
     # 
-    # Called when a notification is pushed from the server
-    # if we already have an item with the same id, call the update
-    # event and update our instance.  Otherwise, add it to the collection
+    # Called when a notification is pushed from the server if we already have
+    # an item with the same id, call the update event and update our instance.
+    # Otherwise, add it to the collection
     #
     # TODO: this should at some point take sorting and limits into account!
     
@@ -24,23 +25,25 @@ define ["underscore", "events"], (_, {EventEmitter}, inflect) ->
         # the load method passes in multiple documents
         # we iterate over them
         _.each document, (doc) =>
+          id = doc._id
           doc = new @LiveDocumentClass(doc)
-          @items.push doc
+          @items.push id
           @length = @items.length
-          @ids[doc.get("_id")] = @items.length - 1
+          @ids[id] = doc
         @loaded = true
         @emit "load", this
-      else if method == "update"
-          doc = @items[@ids[document._id]].set(document)
-          @emit "update", doc
-        else if method == "insert"
-          document = new @LiveDocumentClass(document)
-          @items.push(document)
+      else if method == "insert"
+        id = document._id
+        document = new @LiveDocumentClass(document)
+        @items.push(id)
+        @length = @items.length
+        @ids[id] = document
+        @emit "insert", document
+      else if method == "remove"
+        id = document._id
+        index = _(@items).indexOf(id)
+        if index >= 0
+          oldDoc = @items.splice(index, 1)[0]
           @length = @items.length
-          @ids[document.get("_id")] = @items.length - 1
-          @emit "insert", document
-        else if method == "delete"
-          oldDoc = @items.splice(@ids[document.get("_id")], 1)[0]
-          @length = @items.length
-          delete @ids[oldDoc.get("_id")]
-          @emit "delete", oldDoc
+          delete @ids[id]
+          @emit "remove", oldDoc

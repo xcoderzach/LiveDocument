@@ -16,7 +16,7 @@ define ["cs!lib/drivers/mongodb/conditional_matcher", "cs!lib/drivers/mongodb/da
       @socket.on "LiveDocumentCreate", @handleCreateMessage.bind(@)
       @socket.on "LiveDocumentRead", @handleReadMessage.bind(@)
       @socket.on "LiveDocumentUpdate", @handleUpdateMessage.bind(@)
-      @socket.on "LiveDocumentDelete", @handleDeleteMessage.bind(@)
+      @socket.on "LiveDocumentCollectionRemove", @handleDeleteMessage.bind(@)
        
     # Takes in a document and finds all the listeners who would like to be
     # notified about it
@@ -108,7 +108,7 @@ define ["cs!lib/drivers/mongodb/conditional_matcher", "cs!lib/drivers/mongodb/da
         # get insert notifications
         insertNotifications = _(newListeners).difference oldListeners
 
-        @notifyListeners removeNotifications, oldDocument, "delete"
+        @notifyListeners removeNotifications, oldDocument, "remove"
         @notifyListeners insertNotifications, newDocument, "insert"
                                      
     # When we get a delete message notify the deleter and all the people who
@@ -118,5 +118,5 @@ define ["cs!lib/drivers/mongodb/conditional_matcher", "cs!lib/drivers/mongodb/da
       @db.delete collection, conditions, (document) =>
         @notifyById(document._id, document, "delete")
         @unwatchId(document._id)
-        @notifyMatchingListeners document, "delete"
+        @notifyMatchingListeners document, "remove"
         callback document

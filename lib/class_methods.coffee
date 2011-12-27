@@ -34,7 +34,7 @@ define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollec
     # This method sends a message containing the query to find a document to delete
 
     sendDeleteMessage: (query, callback) ->
-      @socket.emit "LiveDocumentDelete", @collectionName(), query, callback
+      @socket.emit "LiveDocumentCollectionRemove", @collectionName(), query, callback
  
     # **sendUpdateMessage** *private*
     #
@@ -107,8 +107,11 @@ define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollec
       if(!callback?)
         callback = () ->
 
-      @sendDeleteMessage query, callback
-
+      instance = new @()
+      @sendDeleteMessage query, (document) ->
+        instance.set(document)
+        callback(instance)
+      return instance
     # **key** *public* 
     #
     # The key method is called at declaration time. It defines which keys are
