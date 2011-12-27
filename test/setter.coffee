@@ -1,0 +1,38 @@
+{ EventEmitter }      = require "events"
+{ LiveDocument
+, LiveDocumentMongo } = require "../index.coffee"
+assert                = require "assert"
+Mongolian             = require "mongolian"
+
+db = new Mongolian("localhost/LiveDocumentTestDB")
+
+
+class Thing extends LiveDocument
+
+  @socket = new EventEmitter
+
+  @key "title", { length: [3...24] }
+  @key "description", { max: 140, required: true }
+
+liveDocumentMongo = new LiveDocumentMongo(new EventEmitter, db)
+
+describe "LiveDocument", ->
+  beforeEach ->
+    # clean out all of the old listeners from previous tests 
+    socket = new EventEmitter
+    Thing.socket = socket
+    liveDocumentMongo.setSocket(socket)
+    db.collection("things").remove {}, (err) ->
+      done()
+
+  describe "instances", ->
+    describe ".set", ->
+      it "should update the value", ->
+        thing = Thing.create({title: "w00t", description: "woo hooo"})
+        thing.set("title", "b00t")
+        thing.get("title").should.equal "b00t"
+      
+
+      # This test brings up the interesting world of merging!
+      it "should not get its value overwritten by an incoming update"
+      it "should be saved when save is called"
