@@ -74,8 +74,9 @@ define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollec
       if(!callback?)
         callback = () ->
 
-      @sendCreateMessage document, callback
-      new @(document)
+      doc = new @(document)
+      @sendCreateMessage doc.document, callback
+      return doc
  
     # **update** *public*
     #

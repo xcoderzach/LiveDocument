@@ -1,6 +1,6 @@
 define () ->
   return (db)->
-    DatabaseMethods
+    DatabaseMethods =
       # **create** *private* 
       #
       # Inserts the document specified, and calls the callback with

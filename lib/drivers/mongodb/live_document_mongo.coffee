@@ -1,4 +1,4 @@
-define ["require", "cs!./conditional_matcher", "cs!./database_methods", "underscore"], (require, ConditionMatcher, DatabaseMethods, _) ->
+define ["cs!./conditional_matcher", "cs!./database_methods", "underscore"], (ConditionMatcher, DatabaseMethods, _) ->
  
   class LiveDocumentMongo
 
@@ -7,7 +7,7 @@ define ["require", "cs!./conditional_matcher", "cs!./database_methods", "undersc
     # Takes in a "socket", or any EventEmitter, and a mongodb database connection
     # and listens for updates on the socket
     
-    constructor: (@socket) ->
+    constructor: (@socket, connection) ->
       @db = DatabaseMethods connection
 
       @socket.on "LiveDocumentCreate", @handleCreateMessage.bind(@)
@@ -20,7 +20,7 @@ define ["require", "cs!./conditional_matcher", "cs!./database_methods", "undersc
     
     matchingListeners: (document) ->
       callbacks = []
-      LiveDocument.listeners.forEach (listener) ->
+      LiveDocumentMongo.listeners.forEach (listener) ->
         { callback, conditions } = listener
         if ConditionMatcher.match(document, conditions)
           callbacks.push callback
@@ -58,7 +58,7 @@ define ["require", "cs!./conditional_matcher", "cs!./database_methods", "undersc
         cb = (document, method) =>
           @socket.emit "LiveDocument" + requestNumber, document, method
         cb(arr, "load")
-        LiveDocument.listeners.push { callback: cb, conditions: conditions }
+        LiveDocumentMongo.listeners.push { callback: cb, conditions: conditions }
                                    
     # When we get an update message, update the document, notify the updater
     # find out which collections are affected, and notify them 
