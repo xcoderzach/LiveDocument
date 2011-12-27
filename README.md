@@ -12,6 +12,9 @@ are created, updated, or deleted and match your criteria.  If you ask for a
 single document, any changes made to that document will automatically be pushed
 to you.
 
+
+Table of Contents
+-----------------
   * [Example](#example)
   * [Motivation](#motivation)
   * [API docs](#api)
