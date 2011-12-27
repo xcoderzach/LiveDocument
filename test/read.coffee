@@ -1,66 +1,66 @@
-{ EventEmitter } = require "events"
-LiveDocument     = require "../index.coffee"
-assert           = require "assert"
- 
-echoRead = (expected) ->
-  Thing.socket.on "LiveDocumentRead", (name, query, requestNumber) ->
-    process.nextTick ->
-      Thing.socket.emit "LiveDocument" + requestNumber, expected, "load"
+{ EventEmitter }      = require "events"
+{ LiveDocument
+, LiveDocumentMongo } = require "../index.coffee"
+assert                = require "assert"
+Mongolian             = require "mongolian"
 
-changeAfterRead = (expected, newDoc, method) ->
-  Thing.socket.on "LiveDocumentRead", (name, query, requestNumber) ->
-    process.nextTick ->
-      Thing.socket.emit "LiveDocument" + requestNumber, expected, "load"
-      process.nextTick ->
-        Thing.socket.emit "LiveDocument" + requestNumber, newDoc, method
- 
+db = new Mongolian("localhost/LiveDocumentTestDB")
+
 class Thing extends LiveDocument
-  @socket = new EventEmitter()
 
-  @key "title", { length: [3...24] }
-  @key "description", { max: 140, required: true }
+  @socket = new EventEmitter
 
- 
+  @key "title", { length: [3...24], required: true }
+  @key "description", { max: 140 }
+
+liveDocumentMongo = new LiveDocumentMongo(new EventEmitter, db)
+
 describe "LiveDocument", ->
-  beforeEach ->
+  beforeEach (done) ->
     # clean out all of the old listeners from previous tests 
-    Thing.socket = new EventEmitter()
+    socket = new EventEmitter
+    Thing.socket = socket
+    liveDocumentMongo.setSocket(socket)
+    db.collection("things").remove {}, (err) ->
+      done()
+
 
   describe ".read()", ->
-    describe "with no conditions", ->
 
-      it "should send a read message", (done) ->
-        Thing.socket.on "LiveDocumentRead", (name, query, requestNumber) ->
-          name.should.equal "things"
-          query.should.eql {}
-          # if we actually test the number it'll make our tests fragile
-          # b/c we can't reorder or create new tests
-          (typeof requestNumber).should.equal "number"
-          done()
-        Thing.read()
+    describe "with a query", ->
+      it "should read a document", (done) ->
+        document = {title: "I'm a title", description: "description"}
+        Thing.create document, ->
+          Thing.read {title: "I'm a title"}, (things) ->
+            # send it to the next tick because mongolian swallows our
+            # assertions
+            process.nextTick ->
+              things.at(0).get("title").should.equal document.title
+              things.at(0).get("description").should.equal document.description
+              done()
 
+    describe "without a query", ->
+      it "should call the callback event with multiple results", (done) ->
+        expected = [ {title: "A title", description: "w00t describing"}
+                   , {title: "A title 2", description: "w00t describing 2"}]
+        Thing.create expected[0], ->
+          Thing.create expected[1], ->
+            things = Thing.read {}, (docs) ->
+              process.nextTick ->
+                docs.at(0).get("title").should.equal expected[0].title
+                docs.at(0).get("description").should.equal expected[0].description
 
-      it "should call the load event when it gets the results", (done) ->
-        expected  = [ {title: "A title", description: "w00t describing"}
-                    , {title: "A title 2", description: "w00t describing 2"} ]
-        echoRead(expected)
-        things = Thing.read()
-        things.on "load", (docs) ->
-          docs.at(0).get("title").should.equal expected[0].title
-          docs.at(0).get("description").should.equal expected[0].description
+                docs.at(1).get("title").should.equal expected[1].title
+                docs.at(1).get("description").should.equal expected[1].description
+                done()
 
-          docs.at(1).get("title").should.equal expected[1].title
-          docs.at(1).get("description").should.equal expected[1].description
-          done()
-  
 
       it "should fire an insert event when a document is inserted"
       it "should fire a remove event when a document is removed"
 
-
       it "should set the loaded attribute on the collection", (done) ->
-        expected = [ {title: "A title", description: "w00t describing"} ]
-        echoRead(expected)
+        expected = {title: "A title", description: "w00t describing"}
+        Thing.create expected
         doneTimes = 0
         things = Thing.read {}, (thngs) ->
           things.loaded.should.equal true
@@ -76,4 +76,3 @@ describe "LiveDocument", ->
           doneTimes += 1
           if doneTimes == 2
             done()
-   

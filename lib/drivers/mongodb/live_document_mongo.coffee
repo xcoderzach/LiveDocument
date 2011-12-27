@@ -1,4 +1,4 @@
-define ["cs!./conditional_matcher", "cs!./database_methods", "underscore"], (ConditionMatcher, DatabaseMethods, _) ->
+define ["cs!lib/drivers/mongodb/conditional_matcher", "cs!lib/drivers/mongodb/database_methods", "underscore"], (ConditionMatcher, DatabaseMethods, _) ->
  
   class LiveDocumentMongo
 
@@ -7,16 +7,19 @@ define ["cs!./conditional_matcher", "cs!./database_methods", "underscore"], (Con
     # Takes in a "socket", or any EventEmitter, and a mongodb database connection
     # and listens for updates on the socket
     
-    constructor: (@socket, connection) ->
+    constructor: (socket, connection) ->
       @db = DatabaseMethods connection
+      @setSocket socket
 
+    # Takes in a document and finds all the listeners who would like to be
+    # notified about it
+    
+    setSocket: (@socket) ->
       @socket.on "LiveDocumentCreate", @handleCreateMessage.bind(@)
       @socket.on "LiveDocumentRead", @handleReadMessage.bind(@)
       @socket.on "LiveDocumentUpdate", @handleUpdateMessage.bind(@)
       @socket.on "LiveDocumentDelete", @handleDeleteMessage.bind(@)
-
-    # Takes in a document and finds all the listeners who would like to be
-    # notified about it
+       
     
     matchingListeners: (document) ->
       callbacks = []

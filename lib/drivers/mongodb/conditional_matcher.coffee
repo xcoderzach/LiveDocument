@@ -43,7 +43,8 @@ matchers =
   
 # dot notation
 
-module.exports = ConditionMatcher =
+define ->
+  ConditionMatcher =
     match: (document, conditions) ->
       matched = true
       Object.keys(conditions).forEach (field) ->
