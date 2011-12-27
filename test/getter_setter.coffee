@@ -39,12 +39,16 @@ describe "LiveDocument", ->
         thing.get("description").should.equal "boo hooo"
       
       # This test brings up the interesting world of merging!
+      # on("conflict")?
       it "should not get its value overwritten by an incoming update"
 
       it "should be saved when save is called", (done) ->
         thing = new Thing
-        thing.set {title: "w000t", description: "My Description"}
-        thing.save ->
+        self = thing.set {title: "w000t", description: "My Description"}
+        #ensure chainability
+        thing.should.equal self
+        self = thing.save ->
           thing.get("title").should.equal "w000t"
           thing.get("description").should.equal "My Description"
           done()
+        thing.should.equal self

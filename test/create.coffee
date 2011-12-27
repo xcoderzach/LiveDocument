@@ -59,6 +59,12 @@ describe "LiveDocument", ->
           process.nextTick ->
             things.length.should.equal 0
             done()
+        
+      it "should save after create should be update"
+      it "should set persisted to true after create"
+      it "should set saving to true during create"
+      it "should fire a persisted event"
+      it "should fire a saving and done saving event"
 
     describe "that does not validate", ->
       describe "because it is missing a required field", ->
