@@ -6,6 +6,7 @@ define ["underscore", "events"], (_, {EventEmitter}, inflect) ->
       @items = []
       @loaded = false
       @ids = {}
+      @length = @items.length
 
     at: (index) ->
       return @items[index]
@@ -25,6 +26,7 @@ define ["underscore", "events"], (_, {EventEmitter}, inflect) ->
         _.each document, (doc) =>
           doc = new @LiveDocumentClass(doc)
           @items.push doc
+          @length = @items.length
           @ids[doc.get("_id")] = @items.length - 1
         @loaded = true
         @emit "load", this
@@ -34,9 +36,11 @@ define ["underscore", "events"], (_, {EventEmitter}, inflect) ->
         else if method == "insert"
           document = new @LiveDocumentClass(document)
           @items.push(document)
+          @length = @items.length
           @ids[document.get("_id")] = @items.length - 1
           @emit "insert", document
         else if method == "delete"
           oldDoc = @items.splice(@ids[document.get("_id")], 1)[0]
+          @length = @items.length
           delete @ids[oldDoc.get("_id")]
           @emit "delete", oldDoc

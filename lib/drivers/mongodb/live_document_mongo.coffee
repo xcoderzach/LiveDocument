@@ -108,7 +108,7 @@ define ["cs!lib/drivers/mongodb/conditional_matcher", "cs!lib/drivers/mongodb/da
     # care about it 
     
     handleDeleteMessage: (collection, conditions, callback) ->
-      @db.delete collection, conditions, (document) ->
+      @db.delete collection, conditions, (document) =>
         @unwatchId(document._id)
         @notifyMatchingListeners document, "delete"
         callback document
