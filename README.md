@@ -20,7 +20,7 @@ to you.
   * [License](#license)
 
 
-<a id = "example"></a>
+<a name = "example"></a>
 Example
 -------
 
@@ -81,11 +81,11 @@ tasks.on "remove", (tasks) ->
 
 ```
  
-<a id = "motivation"></a>
+<a name = "motivation"></a>
 Motivation
 ----------
 
-<a id = "api"></a>
+<a name = "api"></a>
 API 
 ---
 
@@ -107,7 +107,7 @@ error messages.  Error messages belong in the view.
   All of the declarative LiveDocument class methods, return this, allowing you
 to chain them together.
 
-<a id = "contributors"></a>
+<a name = "contributors"></a>
 Contributors
 ------------
 
@@ -115,7 +115,7 @@ Contributors
   * Eugene Butler
   * Chad Seibert
 
-<a id = "license"></a>
+<a name = "license"></a>
 License
 -------
 
