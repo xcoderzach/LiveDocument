@@ -12,16 +12,17 @@ are created, updated, or deleted and match your criteria.  If you ask for a
 single document, any changes made to that document will automatically be pushed
 to you.
 
-  * [Example][example]
-  * [Motivation][motivation]
-  * [API docs][api]
-  * [Tests][tests]
-  * [Contributors][contributors]
-  * [License][license]
+  * [Example](#example)
+  * [Motivation](#motivation)
+  * [API docs](#api)
+  * [Tests](#tests)
+  * [Contributors](#contributors)
+  * [License](#license)
 
 
-[example]: Example
-------------------
+[#example]: &nbsp;
+Example
+-------
 
   In coffeescript:
 
@@ -80,10 +81,12 @@ tasks.on "remove", (tasks) ->
 
 ```
  
-[motivation]: Motivation
-------------------------
+[motivation]: &nbsp;
+Motivation
+----------
 
-[api]: API 
+[api]: &nbsp;
+API 
 ----------
 
 Validation
@@ -104,14 +107,16 @@ error messages.  Error messages belong in the view.
   All of the declarative LiveDocument class methods, return this, allowing you
 to chain them together.
 
-[contributors]: Contributors
-----------------------------
+[contributors]: &nbsp;
+Contributors
+------------
 
   * Zach Smith
   * Eugene Butler
   * Chad Seibert
 
-[license]: License
-----------------------------
+[license]: &nbsp;
+License
+-------
 
   Licensed under MIT (see LICENSE file)
