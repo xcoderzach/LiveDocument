@@ -20,7 +20,7 @@ to you.
   * [License](#license)
 
 
-[#example]: &nbsp;
+<a name = "#example"></a>
 Example
 -------
 
