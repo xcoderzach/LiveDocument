@@ -97,7 +97,6 @@ define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollec
       instance = new @()
       @sendUpdateMessage query, document, (document) =>
         instance.set(document)
-        console.log(instance)
         callback(instance)
       return instance
 

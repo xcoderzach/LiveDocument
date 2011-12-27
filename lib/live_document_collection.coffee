@@ -29,7 +29,7 @@ define ["underscore", "events"], (_, {EventEmitter}, inflect) ->
         @loaded = true
         @emit "load", this
       else if method == "update"
-          doc = @items[@ids[document.get("_id")]].set(document)
+          doc = @items[@ids[document._id]].set(document)
           @emit "update", doc
         else if method == "insert"
           document = new @LiveDocumentClass(document)

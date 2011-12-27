@@ -17,6 +17,7 @@ define ["underscore", "cs!lib/object_id"], (_, generateObjectId) ->
           @set(k, v)
       else
         @document[field] = value
+      return @
 
     watch: (callback) ->
       @constructor.sendReadMessage @collectionName, @document, (docs) ->

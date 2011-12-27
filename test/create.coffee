@@ -24,7 +24,8 @@ describe "LiveDocument", ->
       it "should send a create message", (done) ->
         document = { title: "w00t", description: "w00t w00t" }
         Thing.create document, (doc) ->
-          doc.should.eql document
+          doc.get("title").should.eql document.title
+          doc.get("description").should.eql document.description
           done()
 
       it "should generate an id for the document", ->
