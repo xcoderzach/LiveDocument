@@ -42,9 +42,8 @@ matchers =
   $where: () -> throw "implement me!"
   
 # dot notation
-define () ->
 
-  ConditionMatcher =
+module.exports = ConditionMatcher =
     match: (document, conditions) ->
       matched = true
       Object.keys(conditions).forEach (field) ->
@@ -56,5 +55,3 @@ define () ->
             value = condition[operator]
             matched = matched && matchers[operator](document[field], value)
       return matched
-
-  return ConditionMatcher
