@@ -25,10 +25,10 @@ describe "LiveDocument", ->
     db.collection("things").remove {}, (err) ->
       done()
  
-  describe "collections" ->
-    describe ".at()"
+  describe "collections", ->
+    describe ".at()", ->
       it "should return the item at index given"
-    describe ".sort()"
+    describe ".sort()", ->
       it "should put the elements in sorted order"
       it "should emit a clear event whenever sort() is called on a non-empty collection"
       it "should insert new elements into correct position"

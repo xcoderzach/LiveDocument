@@ -1,6 +1,7 @@
 define ["cs!lib/drivers/mongodb/conditional_matcher", "cs!lib/drivers/mongodb/database_methods", "underscore"], (ConditionMatcher, DatabaseMethods, _) ->
  
   class LiveDocumentMongo
+    @ConditionalMatcher = ConditionMatcher
     # these should both have limitations, to prevent DOS
     @listeners: []
     @ids = {}

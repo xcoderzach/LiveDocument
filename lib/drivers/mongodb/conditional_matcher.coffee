@@ -1,4 +1,3 @@
-#
 # matchers take the form of (actual, expected)
 #
 # actual is the actual value, and expected is 

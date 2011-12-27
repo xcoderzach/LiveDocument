@@ -60,6 +60,8 @@ describe "LiveDocument", ->
             things.length.should.equal 0
             done()
         
+      it "should fire a load event when the document is loaded"
+      it "should fire a create event when the document is created"
       it "should save after create should be update"
       it "should set persisted to true after create"
       it "should set saving to true during create"

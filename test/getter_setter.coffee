@@ -1,6 +1,6 @@
 { EventEmitter }      = require "events"
 { LiveDocument
-, LiveDocumentMongo } = require "../index.coffee"
+, LiveDocumentMongo } = require "../index"
 assert                = require "assert"
 Mongolian             = require "mongolian"
 
@@ -26,7 +26,7 @@ describe "LiveDocument", ->
       done()
 
   describe "instances", ->
-    describe ".set", ->
+    describe ".set()", ->
       it "should update the value", ->
         thing = Thing.create({title: "w00t", description: "woo hooo"})
         thing.set("title", "b00t")
@@ -52,3 +52,16 @@ describe "LiveDocument", ->
           thing.get("description").should.equal "My Description"
           done()
         thing.should.equal self
+      it "should fire change events for the attributes that change"
+    describe ".get()", ->
+      it "should return the value"
+      it "when passed with a function as the second parameter get should call it with the value on load and update"
+
+    describe ".changed()", ->
+      describe "when an attribute has been changed", ->
+        it "should return true when passed the changed attribute's name"
+        it "should return false when passed the changed attribute has not been changed"
+        it "should differentiate between remote and local changes"
+
+
+    
