@@ -45,10 +45,22 @@ describe "LiveDocument", ->
               things.get(id2).get("title").should.equal "w000t2"
               done()
     describe ".sortBy()", ->
-      describe "when given a function", ->
-        it "should put the elements in sorted order"
+      describe "when given a field name", ->
+        it "should put the elements in sorted order", (done) ->
+          Thing.create { title: "derp", priority: 10 }, ->
+            Thing.create { title: "herp", priority: 100 }, ->
+              Thing.create { title: "herp", priority: 50 }, ->
+                things = Thing.read({}).sortBy "priority"
+                things.on "load", () ->
+                  things.at(0).get("priority").should.equal 10
+                  things.at(1).get("priority").should.equal 50
+                  things.at(2).get("priority").should.equal 100
+                  done()
+              
+          
         it "should emit a clear event whenever sortBy() is called on a non-empty collection"
         it "should insert new elements into correct position"
+        it "should move updated elements into correct position"
       describe "when given a key and a direction", ->
         it "should put the elements in sorted order"
         it "should emit a clear event whenever sortBy() is called on a non-empty collection"

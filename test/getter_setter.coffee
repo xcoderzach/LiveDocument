@@ -95,4 +95,3 @@ describe "LiveDocument", ->
 
       #this is actually questionable, since there would be no way to "unbind"
       it "when passed with a function as the second parameter get should call it with the value on load and update"
-
