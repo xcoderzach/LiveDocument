@@ -1,4 +1,5 @@
-define ["cs!lib/drivers/mongodb/conditional_matcher", "cs!lib/drivers/mongodb/database_methods", "underscore"], (ConditionMatcher, DatabaseMethods, _) ->
+define ["cs!lib/drivers/mongodb/conditional_matcher", "cs!lib/drivers/mongodb/database_methods", "underscore"]
+, (ConditionMatcher, DatabaseMethods, _) ->
  
   class LiveDocumentMongo
     @ConditionalMatcher = ConditionMatcher
