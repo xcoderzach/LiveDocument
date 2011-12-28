@@ -52,9 +52,48 @@ describe "LiveDocument", ->
           thing.get("description").should.equal "My Description"
           done()
         thing.should.equal self
-      it "should fire change events for the attributes that change"
+      it "should fire change events for the attributes on the document instance that changed on set", (done) ->
+        actualThing = Thing.create({title: "w00t", description: "woo hooo"})
+        id = actualThing.get("_id")
+        copyOfThing = Thing.read({_id: id})
+
+        actualThing.on "change:title", (val, oldVal, thing) ->
+          val.should.equal "newTitle"
+          oldVal.should.equal "w00t"
+          thing.get("title").should.equal "newTitle"
+          done()
+          
+        copyOfThing.on "change:title", (thing) ->
+          test.fail("this shouldn't be called until the thing has been saved")
+          done()
+
+        actualThing.set {title: "newTitle"}
+
+      it "should fire change events for the attributes on the document instance that changed on set", ->
+        actualThing = Thing.create({title: "w00t", description: "woo hooo"})
+        id = actualThing.get("_id")
+        copyOfThing = Thing.read({_id: id})
+
+        actualThing.on "change:title", (val, oldVal, thing) ->
+          val.should.equal "newTitle"
+          oldVal.should.equal "w00t"
+          thing.get("title").should.equal "newTitle"
+          
+        copyOfThing.on "change:title", (val, oldVal, thing) ->
+          val.should.equal "newTitle"
+          oldVal.should.equal "w00t"
+          thing.get("title").should.equal "newTitle"
+          done()
+
+        actualThing.set {title: "newTitle"}
+        actualThing.save()
+ 
     describe ".get()", ->
-      it "should return the value"
+      it "should return the value", ->
+        thing = Thing.create {title: "w00t", description: "woo hooo"}
+        thing.get("title").should.equal "w00t"
+
+      #this is actually questionable, since there would be no way to "unbind"
       it "when passed with a function as the second parameter get should call it with the value on load and update"
 
     describe ".changed()", ->

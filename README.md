@@ -18,6 +18,7 @@ Table of Contents
   * [Example](#example)
   * [Motivation](#motivation)
   * [API docs](#api)
+  * [Experimental API docs](#experimental)
   * [Tests](#tests)
   * [Contributing](#contributing)
   * [Contributors](#contributors)
@@ -95,6 +96,28 @@ Motivation
 <a name = "api"></a>
 API 
 ---
+
+<a name = "experimental"></a>
+Experimental API (Warning, these method probably DON'T EXIST OR WORK
+----------------
+
+### .allowScope()
+
+  Since we don't want a malicious user to be able to query every
+post on our social network.  Which would essentially be a DoS attack,
+since it would grab EVERY post and authorize them ALL.  That's where
+allowScope comes in handy.  
+
+  The allowScope method won't allow any queries which don't have they keys defined
+in allowScope. 
+
+```coffeescript
+class Post extends LiveDocument
+  @requireScope = true
+  @allowScope { ownerId: } 
+
+```
+
 
 <a name = "tests"></a>
 Tests 

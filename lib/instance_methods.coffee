@@ -22,6 +22,7 @@ define ["underscore", "cs!lib/object_id"], (_, generateObjectId) ->
     # database, otherwise it will update the version in the database, calls
     # the callback with itself, returns itself for chaining
     save: (cb) ->
+      cb ?= ->
       if @persisted == false
         @constructor.sendCreateMessage @document, () =>
           cb(@)
@@ -50,5 +51,8 @@ define ["underscore", "cs!lib/object_id"], (_, generateObjectId) ->
         _.each field, (v, k) =>
           @set(k, v)
       else
-        @document[field] = value
+        oldValue = @document[field]
+        if(@document[field] != value)
+          @document[field] = value
+          @emit "change:" + field, value, oldValue, @
       return @

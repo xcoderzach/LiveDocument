@@ -78,3 +78,10 @@ describe "LiveDocument", ->
           things.should.equal(thngs)
           things.loaded.should.equal true
           done()
+  describe "find()", ->
+    it "should just alias read()"
+  describe "findOne()", ->
+    it "should return a single live document"
+    it "should find by id when given just a string"
+  describe "all()", ->
+    it "should run a query with no conditions"
