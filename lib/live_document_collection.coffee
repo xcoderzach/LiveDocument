@@ -40,11 +40,8 @@ define ["underscore", "events"], (_, {EventEmitter}, inflect) ->
       # if the place where we WOULD insert it, if we were to reinsert it
       # is not 0 (right before itself) or 1 (right after itself)
         if 0 >= (oldIndex - newIndex) <= 1
-          console.log(@length)
           @handleRemove(document)
-          console.log(@length)
           @handleInsert(document)
-          console.log(@length)
 
     handleLoad: (documents) ->
       _.each documents, (doc) =>
