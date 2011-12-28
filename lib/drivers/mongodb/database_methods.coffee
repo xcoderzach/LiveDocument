@@ -9,14 +9,7 @@ define () ->
       create: (collectionName, document, callback) ->
         collection = db.collection(collectionName)
         collection.insert document, (err, doc) ->
-          try
-            if err
-              console.log err.message
-              console.log err.stack
-            else
-                callback document
-          catch e
-            console.log e.stack
+          callback document
      
       # **read** *private* 
       #
@@ -26,14 +19,7 @@ define () ->
       read: (collectionName, conditions, callback) ->
         collection = db.collection(collectionName)
         collection.find(conditions).toArray (err, arr) ->
-          try
-            if err
-              console.log err.message
-              console.log err.stack
-            else
-              callback arr
-          catch e
-            console.log e.stack
+          callback arr
 
       # **update** *private* 
       #
@@ -45,26 +31,11 @@ define () ->
       update: (collectionName, conditions, document, callback) ->
         collection = db.collection(collectionName)
         collection.findAndModify { query: conditions, update: document }, (err, oldDoc) ->
-          try
-            if err
-              console.log err.message
-              console.log err.stack
-            else
-              # the findAndModify finds the old document findOne finds the new
-              # we'll use this later to find out if the update removed the document
-              # from the a collection, added it, or just changed it.
-              
-              collection.findOne { _id: oldDoc._id }, (err, newDoc) ->
-                try
-                  if err
-                    console.log err.message
-                    console.log err.stack
-                  else
-                    callback oldDoc, newDoc
-                catch e
-                  console.log e.stack
-          catch e
-            console.log e.stack
+          # the findAndModify finds the old document findOne finds the new
+          # we'll use this later to find out if the update removed the document
+          # from the a collection, added it, or just changed it.
+          collection.findOne { _id: oldDoc._id }, (err, newDoc) ->
+            callback oldDoc, newDoc
 
       # **delete** *private* 
       #
@@ -76,11 +47,4 @@ define () ->
       delete: (collectionName, conditions, callback) ->
         collection = db.collection(collectionName)
         collection.findAndModify { query: conditions, remove: true }, (err, doc) ->
-          try
-            if err
-              console.log err.message
-              console.log err.stack
-            else
-              callback doc
-          catch e
-            console.log e.stack
+          callback doc

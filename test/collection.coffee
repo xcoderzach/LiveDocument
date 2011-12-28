@@ -17,7 +17,7 @@ class Thing extends LiveDocument
 liveDocumentMongo = new LiveDocumentMongo(new EventEmitter, db)
 
 describe "LiveDocument", ->
-  beforeEach ->
+  beforeEach (done) ->
     # clean out all of the old listeners from previous tests 
     socket = new EventEmitter
     Thing.socket = socket
@@ -27,21 +27,23 @@ describe "LiveDocument", ->
  
   describe "collections", ->
     describe ".at()", ->
-      it "should return the item at index given"
+      it "should return the item at index given", (done) ->
         Thing.create { title: "w000t" }, ->
           Thing.create { title: "w000t2" }, ->
-            things = Thing.find {}, ->
+            things = Thing.read {}, ->
               things.at(0).get("title").should.equal "w000t"
               things.at(1).get("title").should.equal "w000t2"
+              done()
     describe ".get()", ->
-      it "should return the item with given id"
+      it "should return the item with given id", (done) ->
         Thing.create { title: "w000t" }, (thing1) ->
           Thing.create { title: "w000t2" }, (thing2) ->
             id1 = thing1.get("_id")
             id2 = thing2.get("_id")
-            things = Thing.find {}, ->
+            things = Thing.read {}, ->
               things.get(id1).get("title").should.equal "w000t"
               things.get(id2).get("title").should.equal "w000t2"
+              done()
     describe ".sortBy()", ->
       describe "when given a function", ->
         it "should put the elements in sorted order"

@@ -17,7 +17,7 @@ class Thing extends LiveDocument
 liveDocumentMongo = new LiveDocumentMongo(new EventEmitter, db)
 
 describe "LiveDocument", ->
-  beforeEach ->
+  beforeEach (done) ->
     # clean out all of the old listeners from previous tests 
     socket = new EventEmitter
     Thing.socket = socket

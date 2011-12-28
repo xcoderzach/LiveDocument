@@ -12,6 +12,10 @@ define ["underscore", "events"], (_, {EventEmitter}, inflect) ->
     at: (index) ->
       return @ids[@items[index]]
 
+    # returns the item with _id_ in the collection
+    get: (id) ->
+      return @ids[id]
+
     # **handleNotification** *private*
     # 
     # Called when a notification is pushed from the server if we already have
