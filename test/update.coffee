@@ -40,7 +40,7 @@ describe "LiveDocument", ->
       doc = {title: "A title", description: "w00t describd"}
       Thing.create doc, (thing) ->
         id = thing.get("_id")
-        thing.on "update", (newDoc) ->
+        thing.on "change", (newDoc) ->
           newDoc.get("title").should.equal "new Title"
           newDoc.get("description").should.equal doc.description
           done()

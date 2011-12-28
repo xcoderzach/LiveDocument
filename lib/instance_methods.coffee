@@ -5,13 +5,13 @@ define ["underscore", "cs!lib/object_id"], (_, generateObjectId) ->
       @document ?= {}
       @deleted = false
       @persisted = false
+      @alreadyChanging = false
       if !@document._id
         @name = @constructor.name
         @collectionName = _.pluralize(_.uncapitalize(@name))
         @document._id = generateObjectId()
       @constructor.socket.on "LiveDocumentUpdate" + @get("_id"), (doc) =>
         @set(doc)
-        @emit "update", @
       @constructor.socket.on "LiveDocumentDelete" + @get("_id"), (doc) =>
         @deleted = true
         @set(doc)
@@ -43,10 +43,22 @@ define ["underscore", "cs!lib/object_id"], (_, generateObjectId) ->
     get: (field) ->
       @document[field]
 
+    
+
     # takes in a hash of keys and values to set, or a string as the first arg
     # and a value(anything serializable) as the second.
+    # fires a change event, which happens after all of the changes have been made
+    #
+    # If you call set from inside of a change event, it won't call another change
+    # event, phew!
     
     set: (field, value) ->
+      alreadyChanging = @alreadyChanging
+      @alreadyChanging = true
+      # we're initiating the changes, so we'll store the old values
+      if alreadyChanging == false
+        @previousDocument = _.clone(@document)
+
       if typeof field == "object"
         _.each field, (v, k) =>
           @set(k, v)
@@ -55,4 +67,19 @@ define ["underscore", "cs!lib/object_id"], (_, generateObjectId) ->
         if(@document[field] != value)
           @document[field] = value
           @emit "change:" + field, value, oldValue, @
+
+        # if THIS instance of set started the changes, it should emit the change 
+        # event and then end the changingness
+      if alreadyChanging == false
+        fields = _.union(_.keys(@document), _.keys(@previousDocument))
+
+        changedFields = _.filter fields, (key) =>
+          @document[key] != @previousDocument[key]
+                            
+        # if something actually changed
+        if changedFields.length > 0
+          @emit "change", @, changedFields
+        @previousDocument = _.clone(@document)
+        @alreadyChanging = false
+
       return @
