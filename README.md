@@ -1,5 +1,5 @@
-LiveDocumentClient
-==================
+LiveDocument v0.0.0
+===================
 
   LiveDocument is an client/server isopmorphic ODM.  The goal of LiveDocument
 is to provide a seamless way to interact with a mongodb database on the client,
@@ -19,6 +19,7 @@ Table of Contents
   * [Motivation](#motivation)
   * [API docs](#api)
   * [Tests](#tests)
+  * [Contributing](#contributing)
   * [Contributors](#contributors)
   * [License](#license)
 
@@ -27,7 +28,7 @@ Table of Contents
 Example
 -------
 
-In coffeescript:
+Here is a random assortment of code in coffeescript:
 
 ```coffeescript
 class Task extends LiveDocument
@@ -95,6 +96,14 @@ Motivation
 API 
 ---
 
+<a name = "tests"></a>
+Tests 
+-----
+  To run the tests you need an instance of mongo running on the default port.
+Then just run the following.
+
+    mocha test/*.coffee
+
 Validation
 ----------
 
@@ -113,13 +122,25 @@ error messages.  Error messages belong in the view.
   All of the declarative LiveDocument class methods, return this, allowing you
 to chain them together.
 
+<a name = "contributing"></a>
+Contributing
+------------
+  
+  Ideas, feature requests, bug reports, etc are very welcome.  If you want to code something, you could finish
+a pending test.
+
+####TODO
+  * make it able to run by itself, as a server
+  * validations should actually run ;-)
+  * associations, embedded documents, etc
+
 <a name = "contributors"></a>
 Contributors
 ------------
 
-  * Zach Smith
-  * Eugene Butler
-  * Chad Seibert
+  * Zach Smith @xcoderzach
+  * Eugene Butler @EButlerIV
+  * Chad Seibert @omegakoder
 
 <a name = "license"></a>
 License
