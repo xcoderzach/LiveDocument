@@ -96,11 +96,3 @@ describe "LiveDocument", ->
       #this is actually questionable, since there would be no way to "unbind"
       it "when passed with a function as the second parameter get should call it with the value on load and update"
 
-    describe ".changed()", ->
-      describe "when an attribute has been changed", ->
-        it "should return true when passed the changed attribute's name"
-        it "should return false when passed the changed attribute has not been changed"
-        it "should differentiate between remote and local changes"
-
-
-    
