@@ -88,6 +88,7 @@ describe "LiveDocument", ->
         actualThing.set {title: "newTitle"}
         actualThing.save()
  
+      it "should not infinite loop on nested set calls"
     describe ".get()", ->
       it "should return the value", ->
         thing = Thing.create {title: "w00t", description: "woo hooo"}

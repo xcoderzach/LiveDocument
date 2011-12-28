@@ -82,9 +82,8 @@ describe "LiveDocument", ->
                   things.at(0).get("priority").should.equal 10
                   things.at(1).get("priority").should.equal 100
                   things.at(2).get("priority").should.equal 150
+
+                  things.length.should.equal(3)
                   done()
-        it "should emit a clear event whenever sortBy() is called on a non-empty collection"
-      describe "when given a key and a direction", ->
+      describe "when given a function", ->
         it "should put the elements in sorted order"
-        it "should emit a clear event whenever sortBy() is called on a non-empty collection"
-        it "should insert new elements into correct position"

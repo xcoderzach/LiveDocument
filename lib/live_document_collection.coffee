@@ -63,7 +63,7 @@ define ["underscore", "events"], (_, {EventEmitter}, inflect) ->
       @items.splice(@insertAt(id), 0, id)
       @length = @items.length
       if emit
-        @emit "insert", document
+        @emit "insert", document, @
 
     handleRemove: (document) ->
       if(document instanceof @LiveDocumentClass)
@@ -78,7 +78,7 @@ define ["underscore", "events"], (_, {EventEmitter}, inflect) ->
         oldDoc.removeListener("change", @changeListeners[id])
         delete @changeListeners[id]
         delete @ids[id]
-        @emit "remove", oldDoc
+        @emit "remove", oldDoc, @
 
     # **handleNotification** *private*
     # 

@@ -4,7 +4,9 @@ define ["underscore", "cs!lib/object_id"], (_, generateObjectId) ->
     constructor: (@document) ->
       @document ?= {}
       @deleted = false
+      @saved = false
       @persisted = false
+      @loaded = false
       @alreadyChanging = false
       if !@document._id
         @name = @constructor.name
@@ -23,14 +25,21 @@ define ["underscore", "cs!lib/object_id"], (_, generateObjectId) ->
     # the callback with itself, returns itself for chaining
     save: (cb) ->
       cb ?= ->
+      @emit "saving", @
       if @persisted == false
         @constructor.sendCreateMessage @document, () =>
+          @saved = true
+          @emit "saved", @
           cb(@)
+          @persisted = true
       else
+        # TODO only send changed fields
         doc = _.clone(@document)
         delete doc._id
         @constructor.sendUpdateMessage {_id: @document._id }, doc, () =>
+          @saved = true
           cb(@)
+          @emit "saved", @
       return @
     
     # Gets the value of field, takes in an optional function as second
@@ -78,6 +87,7 @@ define ["underscore", "cs!lib/object_id"], (_, generateObjectId) ->
                             
         # if something actually changed
         if changedFields.length > 0
+          @saved = false
           @emit "change", @, changedFields
         @previousDocument = _.clone(@document)
         @alreadyChanging = false

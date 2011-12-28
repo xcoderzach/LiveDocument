@@ -60,13 +60,16 @@ describe "LiveDocument", ->
             things.length.should.equal 0
             done()
         
-      it "should fire a load event when the document is loaded"
-      it "should fire a create event when the document is created"
-      it "should save after create should be update"
-      it "should set persisted to true after create"
-      it "should set saving to true during create"
-      it "should fire a persisted event"
-      it "should fire a saving and done saving event"
+
+      it "should fire a saved event", (done) ->
+        thing = Thing.create({ title: "herp derp", priority: 11 })
+        thing.on "saved", (thing) ->
+          thing.get("title").should.equal "herp derp"
+          thing.get("priority").should.equal 11
+          done()
+ 
+
+      it "needs to check all the different created, loaded etc to find out if something is saved or not"
 
     describe "that does not validate", ->
       describe "because it is missing a required field", ->
