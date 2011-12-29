@@ -7,17 +7,18 @@ Mongolian             = require "mongolian"
 db = new Mongolian("localhost/LiveDocumentTestDB")
 
 
-class Thing extends LiveDocument
-
-  @socket = new EventEmitter
-
-  @key "title", { length: [3...24] }
-  @key "description", { max: 140, required: true }
-
+Thing = null
 liveDocumentMongo = new LiveDocumentMongo(new EventEmitter, db)
 
 describe "LiveDocument", ->
   beforeEach (done) ->
+    class Thing extends LiveDocument
+
+      @socket = new EventEmitter
+
+      @key "title", { length: [3...24] }
+      @key "description", { max: 140, required: true }
+     
     # clean out all of the old listeners from previous tests 
     socket = new EventEmitter
     Thing.socket = socket
@@ -43,4 +44,10 @@ describe "LiveDocument", ->
       thing.save ->
         done("This shouldn't happen")
 
-    it "should pass the thing in and also bind to this"
+    it "should pass the thing in and also bind to this", (done) ->
+      thing = new Thing {title: "w00t"}
+      Thing.beforeSave (ok, t) ->
+        @.should.equal(t).and.equal(thing)
+        ok()
+      thing.save ->
+        done()
