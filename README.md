@@ -26,8 +26,8 @@ Table of Contents
 
 
 <a name = "example"></a>
-Example
--------
+Examples
+--------
 
 Here is a random assortment of code in coffeescript:
 
@@ -86,7 +86,6 @@ tasks.on "remove", (tasks) ->
   # called when a document is deleted that matches the criteria
   # or an document is updated in such a way that it no longer
   # matches the criteria
-
 ```
  
 <a name = "motivation"></a>
@@ -96,6 +95,9 @@ Motivation
 <a name = "api"></a>
 API 
 ---
+
+You can find the API here: 
+xcoderzach.github.com/liveDocument
 
 <a name = "experimental"></a>
 Experimental API (Warning, these method probably DON'T EXIST OR WORK
