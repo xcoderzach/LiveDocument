@@ -36,9 +36,11 @@ define ["underscore", "cs!lib/object_id"], (_, generateObjectId) ->
         # run the before save functions in parallel
         callNext = (i) =>
           if(i < @constructor.beforeSaveFunctions.length)
-            _(@constructor.beforeSaveFunctions[i]).bind(@) (err) ->
+            _(@constructor.beforeSaveFunctions[i]).bind(@) (err) =>
               if(!err?)
                 callNext(i+1)
+              else
+                @emit("error", err)
             , @
           else
             afterAfterSave()
