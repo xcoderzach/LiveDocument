@@ -46,6 +46,18 @@ describe("LiveDocument client code", function() {
         })
       })
     })
-  })
+    it("should be callable from the server", function(done) {
+        var socket = new EventEmitter
+         , ServerPost = serverModel(rpcServer(socket))
+
+        ServerPost.socket = socket
+
+        var serverPost = new ServerPost
+        serverPost.getStuff(function(number) {
+          number.should.equal(1337)
+          done()
+        })
+      })
+    })
+    it("should be bound to the correct instance")
 })
-    
