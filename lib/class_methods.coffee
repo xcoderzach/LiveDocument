@@ -119,3 +119,26 @@ define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollec
     # _properties_: validations and other rules pertaining to the key
 
     key: (name, properties) ->
+
+    # This registers a hook that runs before every instance of this type saves
+    #
+    # The callback will be bound to the instance that is being saved, however,
+    # it is also passed in as the second parameter, if you want to bind your
+    # function to something else.
+    #
+    # Examples:
+    #     class Thing extends LiveDocument
+    #       @beforeSave (done, thing) ->
+    #         checkThingTitleIsOkRemotely thing.get("title"), (isOk)
+    #           if isOk
+    #             done()
+    #           else 
+    #             done("Couldn't save")
+    #
+    # @param           {Function} the function that will be called before each save
+    # @binding         {LiveDocument} Instance being saved
+    # @callbackArg     {Function} Done function, to be called when completed
+    # @callbackArg     {LiveDocument} Instance being saved
+    beforeSave: (fn) ->
+      @beforeSaveFunctions ?= []
+      @beforeSaveFunctions.push(fn)

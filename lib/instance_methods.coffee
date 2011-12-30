@@ -25,21 +25,36 @@ define ["underscore", "cs!lib/object_id"], (_, generateObjectId) ->
     # the callback with itself, returns itself for chaining
     save: (cb) ->
       cb ?= ->
-      @emit "saving", @
-      if @persisted == false
-        @constructor.sendCreateMessage @document, () =>
-          @saved = true
-          @emit "saved", @
-          cb(@)
-          @persisted = true
+      afterAfterSave = () =>
+        @emit "saving", @
+        if @persisted == false
+          @constructor.sendCreateMessage @document, () =>
+            @saved = true
+            @emit "saved", @
+            cb(@)
+            @persisted = true
+        else
+          # TODO only send changed fields
+          doc = _.clone(@document)
+          delete doc._id
+          @constructor.sendUpdateMessage {_id: @document._id }, doc, () =>
+            @saved = true
+            cb(@)
+            @emit "saved", @
+      if @constructor.beforeSaveFunctions?
+        callNext = (i) =>
+          if(i < @constructor.beforeSaveFunctions.length)
+            _(@constructor.beforeSaveFunctions[i]).bind(@) (err) =>
+              if(!err?)
+                callNext(i+1)
+              else
+                @emit("error", err)
+            , @
+          else
+            afterAfterSave()
+        callNext(0)
       else
-        # TODO only send changed fields
-        doc = _.clone(@document)
-        delete doc._id
-        @constructor.sendUpdateMessage {_id: @document._id }, doc, () =>
-          @saved = true
-          cb(@)
-          @emit "saved", @
+        afterAfterSave()
       return @
     
     # Gets the value of field, takes in an optional function as second
