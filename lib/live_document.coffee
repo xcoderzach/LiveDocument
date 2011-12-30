@@ -10,3 +10,9 @@ define [ "underscore"
     @socket = if window? && window.socket? then window.socket
     _.extend(@, ClassMethods)
     _.extend(@prototype, InstanceMethods)
+
+    #basically what coffeescript class syntax does...
+    @define: (name) ->
+      class SubClass extends LiveDocument
+      SubClass.name = name
+      return SubClass

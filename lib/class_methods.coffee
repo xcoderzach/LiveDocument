@@ -119,6 +119,7 @@ define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollec
     # _properties_: validations and other rules pertaining to the key
 
     key: (name, properties) ->
+      return @
 
     # This registers a hook that runs before every instance of this type saves
     #
