@@ -6,8 +6,9 @@ var LiveDocument = require("../../index.coffee").LiveDocument
 module.exports = function(server) {
 
   var Post = LiveDocument.define("Post")
+  Post.server = server
 
-  Post.prototype.getStuff = server(function(done){done(1337)})
+  Post.prototype.getStuff = Post.server(function(done){done(1337)})
 
   return Post
 }
