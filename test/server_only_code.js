@@ -59,5 +59,26 @@ describe("LiveDocument client code", function() {
         })
       })
     })
-    it("should be bound to the correct instance")
+    it("should be bound to the correct instance", function() {
+      request("http://localhost:7357/javascripts/models/post.js", function(err, res) {
+        var fd = fs.openSync(__dirname + "/models/postClient.js", "w")
+        fs.writeSync(fd, res.text, 0)
+        var clientModel = require(__dirname + "/models/postClient.js")
+
+        var socket = new EventEmitter
+        // rather than spin up socket.io we use this
+        var ClientPost = clientModel(rpcClient(socket))
+          , ServerPost = serverModel(rpcServer(socket))
+
+        ClientPost.socket = socket
+        ServerPost.socket = socket
+
+        var clientPost = new ClientPost({password: "Herp Derp"}, function() {
+          clientPost.getPassword(function(pw) {
+            pw.should.equal("Herp Derp")
+            done()
+          })
+        })
+      }) 
+    })
 })

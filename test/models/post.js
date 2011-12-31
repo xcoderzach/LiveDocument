@@ -10,5 +10,7 @@ module.exports = function(server) {
 
   Post.prototype.getStuff = Post.server(function(done){done(1337)})
 
+  Post.prototype.getPassword = Post.server(function(done){done(this.get("password"))})
+
   return Post
 }
