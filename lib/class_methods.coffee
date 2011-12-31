@@ -1,6 +1,7 @@
+if (typeof define != 'function') then define = (require('amdefine'))(module)
 requestCallbackNonce = 0
 
-define ["underscore", "cs!lib/live_document_collection"], (_, LiveDocumentCollection) ->
+define ["underscore", "./live_document_collection"], (_, LiveDocumentCollection) ->
   
   # Static methods to do common database tasks
   LiveDocumentClassMethods =

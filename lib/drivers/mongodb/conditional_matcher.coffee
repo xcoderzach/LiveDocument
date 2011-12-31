@@ -1,3 +1,4 @@
+if (typeof define != 'function') then define = (require('amdefine'))(module)
 # matchers take the form of (actual, expected)
 #
 # actual is the actual value, and expected is 

@@ -1,4 +1,5 @@
-define ["underscore", "events"], (_, {EventEmitter}, inflect) ->
+if (typeof define != 'function') then define = (require('amdefine'))(module)
+define ["underscore", "events"], (_, {EventEmitter}) ->
 
   class LiveDocumentCollection extends EventEmitter
 

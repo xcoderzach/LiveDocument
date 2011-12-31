@@ -1,3 +1,4 @@
+if (typeof define != 'function') then define = (require('amdefine'))(module)
 uncountableWords = [ 'equipment', 'information', 'rice', 'money', 'species',
                        'series', 'fish', 'sheep', 'moose', 'deer', 'news' ]
 

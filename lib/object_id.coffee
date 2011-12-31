@@ -1,3 +1,4 @@
+if (typeof define != 'function') then define = (require('amdefine'))(module)
 define () ->
   machineId = Math.ceil(Math.random()*10000000).toString().slice(0, 6)
   pid = Math.ceil(Math.random()*10000000).toString().slice(0, 4)

@@ -1,7 +1,8 @@
+if (typeof define != 'function') then define = (require('amdefine'))(module)
 define [ "underscore"
-       , "cs!lib/instance_methods"
-       , "cs!lib/class_methods"
-       , "cs!lib/inflection"
+       , "./instance_methods"
+       , "./class_methods"
+       , "./inflection"
        , "events"]
 , (_, InstanceMethods, ClassMethods, inflect, {EventEmitter}) ->
   _.mixin(inflect)

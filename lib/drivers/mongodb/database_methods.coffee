@@ -1,3 +1,5 @@
+if (typeof define != 'function') then define = (require('amdefine'))(module)
+
 define () ->
   return (db)->
     DatabaseMethods =
