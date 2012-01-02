@@ -9,10 +9,13 @@ define ["underscore", "./object_id"], (_, generateObjectId) ->
       @persisted = false
       @loaded = false
       @alreadyChanging = false
+
+      @modelName = @constructor.modelName
+      @collectionName = _.pluralize(_.uncapitalize(@modelName))
+
       if !@document._id
-        @name = @constructor.name
-        @collectionName = _.pluralize(_.uncapitalize(@name))
         @document._id = generateObjectId()
+
       @constructor.socket.on "LiveDocumentUpdate" + @get("_id"), (doc) =>
         @set(doc)
       @constructor.socket.on "LiveDocumentDelete" + @get("_id"), (doc) =>

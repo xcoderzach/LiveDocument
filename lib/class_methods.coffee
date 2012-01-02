@@ -7,7 +7,7 @@ define ["underscore", "./live_document_collection"], (_, LiveDocumentCollection)
   LiveDocumentClassMethods =
 
     collectionName: () ->
-      _.uncapitalize _.pluralize @name
+      _.uncapitalize _.pluralize @modelName
 
     # **sendReadMessage** *private*
     #

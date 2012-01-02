@@ -8,6 +8,7 @@ _                     = require "underscore"
 db = new Mongolian("localhost/LiveDocumentTestDB")
 
 class Thing extends LiveDocument
+  @modelName = "Thing"
 
   @socket = new EventEmitter
 

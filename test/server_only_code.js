@@ -8,7 +8,9 @@ var EventEmitter = require("events").EventEmitter
   , rpcClient    = LD.rpcClient
   , rpcServer    = LD.rpcServer
   , AssetServer  = LD.AssetServer
+Mongolian        = require("mongolian")
 
+db = new Mongolian("localhost/LiveDocumentTestDB")
 
 connect(
     AssetServer({ input: __dirname + "/models/post.js"
@@ -33,6 +35,8 @@ describe("LiveDocument client code", function() {
 
         var socket = new EventEmitter
         // rather than spin up socket.io we use this
+        var ldm = new LD.LiveDocumentMongo(socket, db)
+
         var ClientPost = clientModel(rpcClient(socket))
           , ServerPost = serverModel(rpcServer(socket))
 
@@ -53,8 +57,7 @@ describe("LiveDocument client code", function() {
         ServerPost.socket = socket
 
         var serverPost = new ServerPost
-        serverPost.getStuff(function(number) {
-          number.should.equal(1337)
+        serverPost.getStuff(function(number) { number.should.equal(1337)
           done()
         })
       })

@@ -14,6 +14,7 @@ describe "LiveDocument", ->
   beforeEach (done) ->
     class Thing extends LiveDocument
 
+      @modelName = "Thing"
       @socket = new EventEmitter
 
       @key "title", { length: [3...24] }

@@ -8,6 +8,7 @@ define [ "underscore"
   _.mixin(inflect)
 
   class LiveDocument extends EventEmitter
+      
     @socket = if window? && window.socket? then window.socket
     _.extend(@, ClassMethods)
     _.extend(@prototype, InstanceMethods)
@@ -15,5 +16,5 @@ define [ "underscore"
     #basically what coffeescript class syntax does...
     @define: (name) ->
       class SubClass extends LiveDocument
-      SubClass.name = name
+        @modelName = name
       return SubClass

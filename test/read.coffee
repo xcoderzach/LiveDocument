@@ -8,6 +8,7 @@ db = new Mongolian("localhost/LiveDocumentTestDB")
 
 class Thing extends LiveDocument
 
+  @modelName = "Thing"
   @socket = new EventEmitter
 
   @key "title", { length: [3...24], required: true }
@@ -45,6 +46,7 @@ describe "LiveDocument", ->
                    , {title: "A title 2", description: "w00t describing 2"}]
         Thing.create expected[0], ->
           Thing.create expected[1], ->
+            console.log(Thing.modelName)
             things = Thing.read {}, (docs) ->
               process.nextTick ->
                 docs.at(0).get("title").should.equal expected[0].title
