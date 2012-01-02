@@ -1,5 +1,5 @@
 if (typeof define != 'function') then define = (require('amdefine'))(module)
-define ["underscore", "./object_id"], (_, generateObjectId) ->
+define [ "underscore", "./object_id"], (_, generateObjectId) ->
 
   LiveDocumentInstanceMethods =
     constructor: (@document) ->

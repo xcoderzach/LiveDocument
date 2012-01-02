@@ -144,3 +144,5 @@ define ["underscore", "./live_document_collection"], (_, LiveDocumentCollection)
     beforeSave: (fn) ->
       @beforeSaveFunctions ?= []
       @beforeSaveFunctions.push(fn)
+  LiveDocumentClassMethods.find = LiveDocumentClassMethods.read
+  return LiveDocumentClassMethods

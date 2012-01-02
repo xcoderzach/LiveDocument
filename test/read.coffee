@@ -33,12 +33,9 @@ describe "LiveDocument", ->
         document = {title: "I'm a title", description: "description"}
         Thing.create document, ->
           Thing.read {title: "I'm a title"}, (things) ->
-            # send it to the next tick because mongolian swallows our
-            # assertions
-            process.nextTick ->
-              things.at(0).get("title").should.equal document.title
-              things.at(0).get("description").should.equal document.description
-              done()
+            things.at(0).get("title").should.equal document.title
+            things.at(0).get("description").should.equal document.description
+            done()
 
     describe "without a query", ->
       it "should call the callback event with multiple results", (done) ->
@@ -80,9 +77,13 @@ describe "LiveDocument", ->
           things.loaded.should.equal true
           done()
   describe "find()", ->
-    it "should just alias read()"
+    it "should just alias read()", ->
+      Thing.find.should.equal(Thing.read)
   describe "findOne()", ->
-    it "should return a single live document"
-    it "should find by id when given just a string"
+    it "should find by id when given just a string", (done) ->
+      t = Thing.create {title: "w000t"}, ->
+        Thing.findOne t.get("_id"), (thing) ->
+          thing.title.should.equal "w000t"
+          done()
   describe "all()", ->
-    it "should run a query with no conditions"
+    it "should find all the things"
