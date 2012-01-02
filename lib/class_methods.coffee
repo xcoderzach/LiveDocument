@@ -65,6 +65,15 @@ define ["underscore", "./live_document_collection"], (_, LiveDocumentCollection)
       collection.on "load", callback
       return collection
 
+    findOne: (id, callback) -> 
+      doc = new @ {_id: id}
+      @sendReadMessage {_id: id}, (docs) ->
+        doc.set(docs[0])
+        callback(doc)
+      return doc
+
+      return instance
+
     # **create** *public*
     # 
     # _document_: Document to create
@@ -110,6 +119,7 @@ define ["underscore", "./live_document_collection"], (_, LiveDocumentCollection)
         instance.set(document)
         callback(instance)
       return instance
+
     # **key** *public* 
     #
     # The key method is called at declaration time. It defines which keys are
@@ -141,6 +151,7 @@ define ["underscore", "./live_document_collection"], (_, LiveDocumentCollection)
     # @binding         {LiveDocument} Instance being saved
     # @callbackArg     {Function} Done function, to be called when completed
     # @callbackArg     {LiveDocument} Instance being saved
+    
     beforeSave: (fn) ->
       @beforeSaveFunctions ?= []
       @beforeSaveFunctions.push(fn)

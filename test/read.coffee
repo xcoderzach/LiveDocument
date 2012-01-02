@@ -76,14 +76,16 @@ describe "LiveDocument", ->
           things.should.equal(thngs)
           things.loaded.should.equal true
           done()
+
   describe "find()", ->
     it "should just alias read()", ->
       Thing.find.should.equal(Thing.read)
+
   describe "findOne()", ->
     it "should find by id when given just a string", (done) ->
       t = Thing.create {title: "w000t"}, ->
         Thing.findOne t.get("_id"), (thing) ->
-          thing.title.should.equal "w000t"
+          thing.get("title").should.equal "w000t"
           done()
   describe "all()", ->
     it "should find all the things"
