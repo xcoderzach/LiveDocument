@@ -68,13 +68,3 @@ describe "LiveDocument", ->
           thing.get("title").should.equal "herp derp"
           thing.get("priority").should.equal 11
           done()
- 
-
-      it "needs to check all the different created, loaded etc to find out if something is saved or not"
-
-    describe "that does not validate", ->
-      describe "because it is missing a required field", ->
-        it "should not send a create message"
-      describe "because it contains invalid data", ->
-        it "should not send a create message"
-        it "should call the callback with an array of fields"
