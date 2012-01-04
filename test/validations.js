@@ -41,10 +41,11 @@ describe("LiveDocument", function() {
     })
   })
   describe("when the validate method is called", function() {
-    it("should emit an error", function() {
+    it("should emit an error", function(done) {
       var thing = new Thing({title: "a", description: "herp derp"})
       thing.on("error", function(thing, invalidFields) {
         invalidFields.should.eql({ "title": ["too short"] })
+        done()
       })
       thing.validate()
     })
