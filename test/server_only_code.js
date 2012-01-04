@@ -1,5 +1,5 @@
 var EventEmitter = require("events").EventEmitter
-  , LD           = require("../index.coffee")
+  , LD           = require("../index")
   , assert       = require("assert")
   , request      = require("superagent")
   , connect      = require("connect")

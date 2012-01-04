@@ -1,6 +1,6 @@
   
 var EventEmitter  = require("events").EventEmitter
-  , LD            = require("../index.coffee")
+  , LD            = require("../index")
   , assert        = require("assert")
   , Mongolian     = require("mongolian")
 
