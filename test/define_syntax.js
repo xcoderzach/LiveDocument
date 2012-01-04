@@ -1,4 +1,3 @@
-  
 var EventEmitter  = require("events").EventEmitter
   , LD            = require("../index")
   , assert        = require("assert")
