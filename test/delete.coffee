@@ -36,11 +36,11 @@ describe "LiveDocument", ->
             done()
 
     it "should send a delete notification to another instance of the same item", (done) ->
-      thing = Thing.create {title: "herp", description: "derp"}
-      thing.on "delete", (thing) ->
-        thing.deleted.should.equal true
-        done()
-      Thing.delete {_id: thing.get("_id")}
+      thing = Thing.create {title: "herp", description: "derp"}, ->
+        thing.on "delete", (thing) ->
+          thing.deleted.should.equal true
+          done()
+        Thing.delete {_id: thing.get("_id")}
 
     it "should send a remove notification to collections that contain that item", (done) ->
       Thing.create {title: "herp", description: "derp"}, (thing) ->

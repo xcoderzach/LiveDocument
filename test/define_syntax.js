@@ -41,10 +41,11 @@ describe("LiveDocument", function() {
       thing.get.should.be.a("function")
       thing.save.should.be.a("function")
 
-      Thing.create({title: "w0000t"})
-      Thing.read({}, function(things) {
-        things.at(0).get("title").should.equal("w0000t")
-        done()
+      Thing.create({title: "w0000t"}, function() {
+        Thing.read({}, function(things) {
+          things.at(0).get("title").should.equal("w0000t")
+          done()
+        })
       })
     }) 
   })
