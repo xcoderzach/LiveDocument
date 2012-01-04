@@ -49,7 +49,13 @@ describe("LiveDocument", function() {
       })
       thing.validate()
     })
-    it("should call a callback with the invalid fields")
+    it("should call a callback with the invalid fields", function() {
+      var thing = new Thing({title: "a", description: "herp derp"})
+      thing.validate(function(invalidFields) {
+        invalidFields.should.eql({ "title": ["too short"] })
+        done()
+      }) 
+    })
   })
 })
 
