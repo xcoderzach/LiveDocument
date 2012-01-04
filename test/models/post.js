@@ -1,4 +1,4 @@
-var LiveDocument = require("../../index.coffee").LiveDocument
+var LiveDocument = require("../../index").LiveDocument
 
 // pass the server thing in because we don't acutally
 // run the client code on the client so we have to hack

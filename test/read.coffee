@@ -1,6 +1,6 @@
 { EventEmitter }      = require "events"
 { LiveDocument
-, LiveDocumentMongo } = require "../index.coffee"
+, LiveDocumentMongo } = require "../index"
 assert                = require "assert"
 Mongolian             = require "mongolian"
 

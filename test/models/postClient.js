@@ -1,4 +1,4 @@
-var LiveDocument = require("../../index.coffee").LiveDocument;
+var LiveDocument = require("../../index").LiveDocument;
 
 module.exports = function(server) {
   var Post = LiveDocument.define("Post");
