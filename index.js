@@ -1,6 +1,6 @@
 if (typeof define !== 'function') { var define = (require('amdefine'))(module); }
 
-define( ["require", "./lib/live_document"]
-      , function(require, LiveDocument) {
+define( ["./lib/live_document"]
+      , function(LiveDocument) {
   return LiveDocument
 })
