@@ -1,5 +1,6 @@
-module.exports.LiveDocument = require("./lib/live_document") 
-module.exports.LiveDocumentMongo = require("./lib/drivers/mongodb/live_document_mongo")
-module.exports.AssetServer = require("./lib/asset_server")
-module.exports.rpcClient = require("./lib/rpc_client")
-module.exports.rpcServer = require("./lib/rpc_server") 
+if (typeof define !== 'function') { var define = (require('amdefine'))(module); }
+
+define( ["require", "./lib/live_document"]
+      , function(require, LiveDocument) {
+  return LiveDocument
+})

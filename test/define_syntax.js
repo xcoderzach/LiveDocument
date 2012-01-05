@@ -1,11 +1,9 @@
 var EventEmitter  = require("events").EventEmitter
-  , LD            = require("../index")
+  , LiveDocument      = require("../index")
+  , LiveDocumentMongo = require("../lib/drivers/mongodb/live_document_mongo")
   , assert        = require("assert")
   , Mongolian     = require("mongolian")
 
-
-  , LiveDocument = LD.LiveDocument
-  , LiveDocumentMongo = LD.LiveDocumentMongo
   , db = new Mongolian("localhost/LiveDocumentTestDB")
 
 

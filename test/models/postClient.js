@@ -1,4 +1,4 @@
-var LiveDocument = require("../../index").LiveDocument;
+var LiveDocument = require("../../index");
 
 module.exports = function(server) {
   var Post = LiveDocument.define("Post");

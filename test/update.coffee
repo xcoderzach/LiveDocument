@@ -1,6 +1,6 @@
 { EventEmitter }      = require "events"
-{ LiveDocument
-, LiveDocumentMongo } = require "../index"
+LiveDocument          = require "../index"
+LiveDocumentMongo     = require "../lib/drivers/mongodb/live_document_mongo"
 assert                = require "assert"
 Mongolian             = require "mongolian"
 _                     = require "underscore"

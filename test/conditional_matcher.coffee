@@ -1,4 +1,4 @@
-{ ConditionMatcher } =require("../index").LiveDocumentMongo
+ConditionMatcher = require("../lib/drivers/mongodb/live_document_mongo").ConditionMatcher
 test = require("assert")
 
 describe "ConditionMatcher", ->

@@ -1,14 +1,16 @@
-var EventEmitter = require("events").EventEmitter
-  , LD           = require("../index")
-  , assert       = require("assert")
-  , request      = require("superagent")
-  , connect      = require("connect")
-  , fs           = require("fs")
-  , serverModel  = require("./models/post.js")
-  , rpcClient    = LD.rpcClient
-  , rpcServer    = LD.rpcServer
-  , AssetServer  = LD.AssetServer
-Mongolian        = require("mongolian")
+var EventEmitter      = require("events").EventEmitter
+  , LiveDocument      = require("../index")
+  , LiveDocumentMongo = require("../lib/drivers/mongodb/live_document_mongo")
+  , assert            = require("assert")
+  , request           = require("superagent")
+  , connect           = require("connect")
+  , fs                = require("fs")
+  , serverModel       = require("./models/post.js")
+  , rpcClient         = require("../lib/rpc_client")
+  , rpcServer         = require("../lib/rpc_server")
+  , AssetServer       = require("../lib/asset_server")
+
+Mongolian             = require("mongolian")
 
 db = new Mongolian("localhost/LiveDocumentTestDB")
 
@@ -35,7 +37,7 @@ describe("LiveDocument client code", function() {
 
         var socket = new EventEmitter
         // rather than spin up socket.io we use this
-        var ldm = new LD.LiveDocumentMongo(socket, db)
+        var ldm = new LiveDocumentMongo(socket, db)
 
         var ClientPost = clientModel(rpcClient(socket))
           , ServerPost = serverModel(rpcServer(socket))
@@ -69,7 +71,7 @@ describe("LiveDocument client code", function() {
         var clientModel = require(__dirname + "/models/postClient.js")
 
         var socket = new EventEmitter
-        var ldm = new LD.LiveDocumentMongo(socket, db)
+        var ldm = new LiveDocumentMongo(socket, db)
         // rather than spin up socket.io we use this
         var ClientPost = clientModel(rpcClient(socket))
           , ServerPost = serverModel(rpcServer(socket))
