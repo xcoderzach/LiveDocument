@@ -1,5 +1,5 @@
 module.exports.LiveDocument = require("./lib/live_document") 
 module.exports.LiveDocumentMongo = require("./lib/drivers/mongodb/live_document_mongo")
 module.exports.AssetServer = require("./lib/asset_server")
-module.exports.rpcClient = require("./lib/rpcClient")
-module.exports.rpcServer = require("./lib/rpcServer") 
+module.exports.rpcClient = require("./lib/rpc_client")
+module.exports.rpcServer = require("./lib/rpc_server") 
