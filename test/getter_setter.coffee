@@ -12,7 +12,7 @@ class Thing extends LiveDocument
 
   @socket = new EventEmitter
 
-  @key "title", { length: [3...24] }
+  @key "title", { length: [3, 24] }
   @key "description", { max: 140, required: true }
 
 liveDocumentMongo = new LiveDocumentMongo(new EventEmitter, db)

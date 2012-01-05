@@ -5,7 +5,7 @@
 , "dependencies": 
   { "requirejs": "1.0.x"
   , "coffee-script": "1.1.x"
-  , "mongolian": "0.1.x"
+  , "mongolian": "0.1.15"
   , "underscore": "1.2.3" 
   , "amdefine": "x.x.x"
   , "uglify-js": "x.x.x"

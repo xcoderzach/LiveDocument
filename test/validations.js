@@ -12,6 +12,16 @@ var EventEmitter  = require("events").EventEmitter
 var Thing = LiveDocument.define("Thing")
   .key("title", { length: [3,24] })
   .key("description", { max: 140, required: true })
+  .key("unique", { unique: true })
+
+Thing.prototype.isUnique = function(property, value, done) {
+  var obj = {}
+  value = value || ""
+  obj[property] = value
+  Thing.read(obj, function(things) {
+    done(things.length === 0)
+  })
+}
 
 Thing.socket = new EventEmitter
 var liveDocumentMongo = new LiveDocumentMongo(new EventEmitter, db)
@@ -39,8 +49,34 @@ describe("LiveDocument", function() {
         })
       })
     })
-
+  })
+  describe("when the validate method is called", function() {
+    it("should emit an error", function(done) {
+      var thing = new Thing({title: "a", description: "herp derp"})
+      thing.on("error", function(thing, invalidFields) {
+        invalidFields.should.eql({ "title": ["too short"] })
+        done()
+      })
+      thing.validate()
+    })
+    it("should call a callback with the invalid fields", function() {
+      var thing = new Thing({title: "a", description: "herp derp"})
+      //first arg should be an instance
+      thing.validate(function(invalidFields) {
+        invalidFields.should.eql({ "title": ["too short"] })
+        done()
+      }) 
+    })
+  })
+  describe("when the validation method is server only", function() {
+    it("should be called on the server", function(done) {
+      Thing.create({title: "asdasf", description: "herp derp", unique: "derp"}, function() {
+        var thing = Thing.create({title: "asdfasd", description: "herp derp", unique: "derp"})
+        thing.on("error", function(thing, errors) {
+          errors.should.eql({"unique": ["must be unique"]})
+          done()
+        })
+      })
+    })
   })
 })
-
-
