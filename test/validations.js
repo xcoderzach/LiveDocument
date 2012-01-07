@@ -12,14 +12,6 @@ var Thing = LiveDocument.define("Thing")
   .key("description", { max: 140, required: true })
   .key("unique", { unique: true })
 
-Thing.prototype.isUnique = function(property, value, done) {
-  var obj = {}
-  value = value || ""
-  obj[property] = value
-  Thing.read(obj, function(things) {
-    done(things.length === 0)
-  })
-}
 
 Thing.socket = new EventEmitter
 var liveDocumentMongo = new LiveDocumentMongo(new EventEmitter, db)
