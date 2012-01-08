@@ -39,7 +39,7 @@ describe "LiveDocument", ->
           done()
     it "the model should not save if the hook passes something and fire an error event", (done) ->
       Thing.beforeSave (thing, notOk) ->
-        notOk("derp")
+          notOk("derp")
       thing = new Thing {title: "w00t"}
       thing.on "error", (thing, err) ->
         err.should.equal("derp")

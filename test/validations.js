@@ -49,10 +49,10 @@ describe("LiveDocument", function() {
       })
       thing.validate()
     })
-    it("should call a callback with the invalid fields", function() {
+    it("should call a callback with the invalid fields", function(done) {
       var thing = new Thing({title: "a", description: "herp derp"})
       //first arg should be an instance
-      thing.validate(function(invalidFields) {
+      thing.validate(function(thing, invalidFields) {
         invalidFields.should.eql({ "title": ["too short"] })
         done()
       }) 
