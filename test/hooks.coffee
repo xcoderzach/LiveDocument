@@ -54,3 +54,19 @@ describe "LiveDocument", ->
         ok()
       thing.save ->
         done()
+  describe "serverBeforeSaveHook", () ->
+    it "should run on the server", (done) ->
+      Thing.serverBeforeSave (thing, ok) ->
+        done()
+
+      Thing.create {title: "herp"}, () ->
+        done(new Error("shouldn't save"))
+
+    it "should not run on the client", (done) ->
+      Thing.isServer = false
+      Thing.serverBeforeSave (thing, ok) ->
+        done(new Error("serverBeforeSave called on client"))
+
+      Thing.create {title: "herp"}, () ->
+        done()
+
