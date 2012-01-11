@@ -18,7 +18,7 @@ describe "LiveDocument", ->
       @socket = new EventEmitter
 
       @key "title", { length: [3...24] }
-      @key "description", { max: 140, required: true }
+      @key "description", { max: 140 }
      
     # clean out all of the old listeners from previous tests 
     socket = new EventEmitter
@@ -35,8 +35,7 @@ describe "LiveDocument", ->
         ok()
       thing = new Thing {title: "w00t"}
       thing.save ->
-        process.nextTick ->
-          done()
+        done()
     it "the model should not save if the hook passes something and fire an error event", (done) ->
       Thing.beforeSave (thing, notOk) ->
           notOk("derp")

@@ -9,7 +9,7 @@ var EventEmitter  = require("events").EventEmitter
 
 var Thing = LiveDocument.define("Thing")
   .key("title", { length: [3,24] })
-  .key("description", { max: 140, required: true })
+  .key("description", { max: 140 })
 
 Thing.socket = new EventEmitter
 var liveDocumentMongo = new LiveDocumentMongo(new EventEmitter, db)
