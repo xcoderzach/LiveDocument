@@ -22,7 +22,7 @@ connect(
 describe("LiveDocument client code", function() {
   describe("that has server only code", function() {
     it("should not display that code", function(done) {
-      request("http://localhost:7357/javascripts/models/post.js", function(err, res) {
+      request("http://localhost:7357/javascripts/models/post.js", function(res) {
         res.text.should.not.match(/function(done){done(1337)}/)
         done()
       })
@@ -30,7 +30,7 @@ describe("LiveDocument client code", function() {
   })
   describe("when a server only method is invoked", function() {
     it("should call the method on the server", function(done) {
-      request("http://localhost:7357/javascripts/models/post.js", function(err, res) {
+      request("http://localhost:7357/javascripts/models/post.js", function(res) {
         var fd = fs.openSync(__dirname + "/models/postClient.js", "w")
         fs.writeSync(fd, res.text, 0)
         var clientModel = require(__dirname + "/models/postClient.js")
@@ -65,7 +65,7 @@ describe("LiveDocument client code", function() {
       })
     })
     it("should be bound to the correct instance", function(done) {
-      request("http://localhost:7357/javascripts/models/post.js", function(err, res) {
+      request("http://localhost:7357/javascripts/models/post.js", function(res) {
         var fd = fs.openSync(__dirname + "/models/postClient.js", "w")
         fs.writeSync(fd, res.text, 0)
         var clientModel = require(__dirname + "/models/postClient.js")
