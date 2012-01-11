@@ -32,7 +32,7 @@ describe("LiveDocument", function() {
         done(new Error("Callback should not be called"))
       })
       thing.on("error", function(thing, invalidFields) {
-        invalidFields.should.eql({ "title": ["too short"] })
+        invalidFields.should.eql({ "title": ["short"] })
         Thing.find({}, function(things) {
           things.length.should.equal(0)
           done()
@@ -44,7 +44,7 @@ describe("LiveDocument", function() {
     it("should emit an error", function(done) {
       var thing = new Thing({title: "a", description: "herp derp"})
       thing.on("error", function(thing, invalidFields) {
-        invalidFields.should.eql({ "title": ["too short"] })
+        invalidFields.should.eql({ "title": ["short"] })
         done()
       })
       thing.validate()
@@ -53,7 +53,7 @@ describe("LiveDocument", function() {
       var thing = new Thing({title: "a", description: "herp derp"})
       //first arg should be an instance
       thing.validate(function(thing, invalidFields) {
-        invalidFields.should.eql({ "title": ["too short"] })
+        invalidFields.should.eql({ "title": ["short"] })
         done()
       }) 
     })
@@ -63,7 +63,7 @@ describe("LiveDocument", function() {
       Thing.create({title: "asdasf", description: "herp derp", unique: "derp"}, function() {
         var thing = Thing.create({title: "asdfasd", description: "herp derp", unique: "derp"})
         thing.on("error", function(thing, errors) {
-          errors.should.eql({"unique": ["must be unique"]})
+          errors.should.eql({"unique": ["unique"]})
           done()
         })
       })
