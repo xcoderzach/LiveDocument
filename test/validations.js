@@ -41,7 +41,7 @@ describe("LiveDocument", function() {
     })
   })
   describe("when the validate method is called", function() {
-    it("should emit an error", function(done) {
+    it("should emit an error when the document is invalid", function(done) {
       var thing = new Thing({title: "a", description: "herp derp"})
       thing.on("error", function(thing, invalidFields) {
         invalidFields.should.eql({ "title": ["short"] })
@@ -58,6 +58,24 @@ describe("LiveDocument", function() {
       }) 
     })
   })
+  describe("when the validateField method is called", function() {
+    it("should emit an error event when the field is invalid", function(done) {
+      var thing = new Thing({title: "a", description: "herp derp"})
+      thing.on("error:title", function(thing, errors) {
+        errors.should.eql(["short"])
+        done()
+      })
+      thing.validateField("title")
+    })
+    it("should call a callback with the error messages", function(done) {
+      var thing = new Thing({title: "a", description: "herp derp"})
+      //first arg should be an instance
+      thing.validateField("title", function(thing, messages) {
+        messages.should.eql(["short"])
+        done()
+      }) 
+    })
+  }) 
   describe("when the validation method is server only", function() {
     it("should be called on the server", function(done) {
       Thing.create({title: "asdasf", description: "herp derp", unique: "derp"}, function() {
