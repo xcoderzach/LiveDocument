@@ -83,4 +83,15 @@ describe("LiveDocument", function() {
     })
 
   })
+  describe("persisted attribute", function() {
+    it("should be set for items in collection", function(done) {
+      Thing.create({title: "Herp Derp"}, function(t) {
+        t.persisted.should.equal(true)
+        Thing.find({}, function(things) {
+          things.at(0).persisted.should.equal(true)
+          done()
+        })
+      })
+    })
+  })
 })
