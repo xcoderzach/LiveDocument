@@ -12,7 +12,7 @@ describe "LiveDocument", ->
     # clean out all of the old listeners from previous tests 
     socket = new EventEmitter
     Thing.socket = socket
-    instanceLayer = new InstanceLayer(socket, db)
+    instanceLayer = new InstanceLayer(socket, db, "../../../test/models")
     db.collection("things").remove {}, (err) ->
       done()
 
@@ -77,6 +77,8 @@ describe "LiveDocument", ->
       t = Thing.create {title: "w000t"}, ->
         Thing.findOne t.get("_id"), (thing) ->
           thing.get("title").should.equal "w000t"
-          done()
+          Thing.findOne {_id: t.get("_id")}, (thing) ->
+            thing.get("title").should.equal "w000t"
+            done()
   describe "all()", ->
     it "should find all the things"
