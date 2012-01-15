@@ -42,15 +42,20 @@ describe("LiveDocument", function() {
           })
         })
       })
-      it("should not be editable by other users", function() {
+      it("should not be editable by other users", function(done) {
         var currentUser = User.create({ name: "Zach Smith", job: "JavaScript Developer" }, function() {
           var cantEdit = User.create({ name: "Not Zach Smith", job: "Java Developer" }, function() {
             var id = cantEdit.get("_id")
             instanceLayer.setCurrentUserId(currentUser.get("_id"))
             User.currentUserId = currentUser.get("_id")
 
-            User.update({_id: id}, {name: "H4XX'd ur acct br0"}, function(user) {
+            var user = User.update({_id: id}, {name: "H4XX'd ur acct br0"}, function() {
               assert.fail("fail")
+              done("shouldn't run this, should be stopped since not authorized")
+            })
+            user.on("error", function(instance, message) {
+              message.should.equal("Not authorized")
+              done()
             })
           }) 
         }) 

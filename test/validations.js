@@ -31,7 +31,7 @@ describe("LiveDocument", function() {
       var thing = Thing.create({title: "a", description: "herp derp"}, function() {
         done(new Error("Callback should not be called"))
       })
-      thing.on("error", function(thing, invalidFields) {
+      thing.on("invalid", function(thing, invalidFields) {
         invalidFields.should.eql({ "title": ["short"] })
         Thing.find({}, function(things) {
           things.length.should.equal(0)
@@ -43,7 +43,7 @@ describe("LiveDocument", function() {
   describe("when the validate method is called", function() {
     it("should emit an error when the document is invalid", function(done) {
       var thing = new Thing({title: "a", description: "herp derp"})
-      thing.on("error", function(thing, invalidFields) {
+      thing.on("invalid", function(thing, invalidFields) {
         invalidFields.should.eql({ "title": ["short"] })
         done()
       })
@@ -61,7 +61,7 @@ describe("LiveDocument", function() {
   describe("when the validateField method is called", function() {
     it("should emit an error event when the field is invalid", function(done) {
       var thing = new Thing({title: "a", description: "herp derp"})
-      thing.on("error:title", function(thing, errors) {
+      thing.on("invalid:title", function(thing, errors) {
         errors.should.eql(["short"])
         done()
       })
