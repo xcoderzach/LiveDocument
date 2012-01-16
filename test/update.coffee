@@ -3,16 +3,24 @@ LiveDocument          = require "../index"
 assert                = require "assert"
 Mongolian             = require "mongolian"
 _                     = require "underscore"
-Thing                 = require "./models/thing"
 InstanceLayer         = require "../lib/drivers/mongodb/instance_layer"
 
+class Thing extends LiveDocument
+
+  @modelName = "Thing"
+  @socket = new EventEmitter
+
+  @key "title", { length: [3...24], required: true }
+  @key "description", { max: 140 }
+
+ 
 db = new Mongolian("localhost/LiveDocumentTestDB")
 
 describe "LiveDocument", ->
   beforeEach (done) ->
     # clean out all of the old listeners from previous tests 
     socket = new EventEmitter
-    Thing.socket = socket
+    Thing.setSocket(socket)
     instanceLayer = new InstanceLayer(socket, db, "../../../test/models")
 
     db.collection("things").remove {}, (err) ->
@@ -24,7 +32,7 @@ describe "LiveDocument", ->
       doc = {title: "A title", description: "w00t describd"}
       Thing.create doc, (thing) ->
         id = thing.get("_id")
-        Thing.update {_id: id}, {title: "new Title"}, (newDoc) ->
+        Thing.update id, {title: "new Title"}, (newDoc) ->
           newDoc.get("title").should.equal "new Title"
           newDoc.get("description").should.equal doc.description
           done()
@@ -38,4 +46,4 @@ describe "LiveDocument", ->
           newDoc.get("description").should.equal doc.description
           done()
 
-        Thing.update {_id: id}, {title: "new Title"}
+        Thing.update id, {title: "new Title"}

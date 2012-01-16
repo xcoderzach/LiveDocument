@@ -21,7 +21,7 @@ describe "LiveDocument", ->
   beforeEach (done) ->
     # clean out all of the old listeners from previous tests 
     socket = new EventEmitter
-    Thing.socket = socket
+    Thing.setSocket(socket)
     liveDocumentMongo.setSocket(socket)
     db.collection("things").remove {}, (err) ->
       done()

@@ -11,7 +11,7 @@ describe "LiveDocument", ->
   beforeEach (done) ->
     # clean out all of the old listeners from previous tests 
     socket = new EventEmitter
-    Thing.socket = socket
+    Thing.setSocket(socket)
     instanceLayer = new InstanceLayer(socket, db, "../../../test/models")
     db.collection("things").remove {}, (err) ->
       done()
