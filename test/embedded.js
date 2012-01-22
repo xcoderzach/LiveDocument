@@ -34,7 +34,7 @@ describe("LiveDocument", function() {
         p.get("comments").create({body: "Yo cool post bro"}, function(comment) {
           var id = p.get("_id")
           BlogPost.findOne(id, function(post) {
-            post.get("comments").at(0).should.eql(comment)
+            post.get("comments").at(0).document.should.eql(comment.document)
             post.get("comments").at(0).get("body").should.equal("Yo cool post bro")
             done()
           })
