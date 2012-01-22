@@ -76,15 +76,4 @@ describe("LiveDocument", function() {
       }) 
     })
   }) 
-  describe("when the validation method is server only", function() {
-    it("should be called on the server", function(done) {
-      Thing.create({title: "asdasf", description: "herp derp", unique: "derp"}, function() {
-        var thing = Thing.create({title: "asdfasd", description: "herp derp", unique: "derp"})
-        thing.on("error", function(thing, errors) {
-          errors.should.eql({"unique": ["unique"]})
-          done()
-        })
-      })
-    })
-  })
 })
