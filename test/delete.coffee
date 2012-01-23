@@ -50,3 +50,14 @@ describe "LiveDocument", ->
           things.length.should.equal 0
           done()
         Thing.delete {_id: thing.get("_id")}
+
+  describe ".remove() instance", ->
+    it "should remove the document", (done) ->
+      Thing.create {title: "herp", description: "derp"}, (thing) ->
+        thing.remove ->
+          thing.deleted.should.equal true
+          Thing.find { _id: thing.get("_id") }, (things) ->
+            things.length.should.equal(0)
+            done()
+       
+
