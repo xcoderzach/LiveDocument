@@ -41,5 +41,17 @@ describe("LiveDocument", function() {
         })
       })
     }) 
+    it("should persist the created document", function(done) {
+      BlogPost.create({"title": "herp"}, function(p) {
+        p.get("comments").create({body: "Yo cool post bro"}, function(comment) {
+          var id = p.get("_id")
+          BlogPost.findOne(id, function(post) {
+            post.get("comments").at(0).document.should.eql(comment.document)
+            post.get("comments").at(0).get("body").should.equal("Yo cool post bro")
+            done()
+          })
+        })
+      })
+    })
   })
 })
