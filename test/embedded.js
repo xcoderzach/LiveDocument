@@ -44,18 +44,17 @@ describe("LiveDocument", function() {
   })
   describe("deleting an embedded document", function() {
     it("should delete the embedded document", function(done) {
-   // var post = BlogPost.create({"title": "herp"}, function() {
-   //   post.get("comments").create({body: "Yo cool post bro"}, function(comment) {
-   //     post.get("comments").at(0).remove(function() {
-   //       (typeof post.get("comments").at(0)).should.equal("undefined")
-   //       done()
-   //     })
-   //   })
-   // })
-      done()
+      var post = BlogPost.create({"title": "herp"}, function() {
+        post.get("comments").create({body: "Yo cool post bro"}, function(comment) {
+          post.get("comments").at(0).remove(function() {
+            comment.deleted.should.equal(true)
+            ;(typeof post.get("comments").at(0)).should.equal("undefined")
+            done()
+          })
+        })
+      })
     })
-    it("the deleted document should not be in the database", function(done) {
-      done()
-    })
+    it("should not be in the database")
+    it("any collections it belongs to should emit a remove event")
   })
 })

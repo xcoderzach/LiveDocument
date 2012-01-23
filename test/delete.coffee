@@ -50,6 +50,7 @@ describe "LiveDocument", ->
           things.length.should.equal 0
           done()
         Thing.delete {_id: thing.get("_id")}
+    it "should fire a deleting event"
 
   describe ".remove() instance", ->
     it "should remove the document", (done) ->
