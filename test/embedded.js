@@ -54,7 +54,18 @@ describe("LiveDocument", function() {
         })
       })
     })
-    it("should not be in the database")
+    it("should not be in the database", function(done) {
+      var post = BlogPost.create({"title": "herp"}, function() {
+        post.get("comments").create({body: "Yo cool post bro"}, function(comment) {
+          post.get("comments").at(0).remove(function() {
+            BlogPost.findOne(post.get("_id"), function(post) {
+              ;(typeof post.get("comments").at(0)).should.equal("undefined")
+              done()
+            })
+          })
+        })
+      }) 
+    })
     it("any collections it belongs to should emit a remove event")
   })
 })
