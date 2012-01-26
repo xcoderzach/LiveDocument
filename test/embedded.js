@@ -15,10 +15,14 @@ describe("LiveDocument", function() {
 
     BlogPost.setSocket(socket)
 
-    db.collection("users").remove({}, function(err) {
-      done()
+    db.collection("blogPosts").remove({}, function(err) {
+      try {
+        done()
+      } catch(e) {
+        console.log(e)
+      }
     })
-  }) 
+  })
   describe("adding an embedded document", function() {
     it("should have created an associated embedded document", function(done) {
       var post = BlogPost.create({"title": "herp"}, function() {
@@ -29,6 +33,7 @@ describe("LiveDocument", function() {
         })
       })
     })
+    it("should to should emit insert event on it's collections")
     it("should persist the created document", function(done) {
       BlogPost.create({"title": "herp"}, function(p) {
         p.get("comments").create({body: "Yo cool post bro"}, function(comment) {
@@ -40,7 +45,7 @@ describe("LiveDocument", function() {
           })
         })
       })
-    }) 
+    })
   })
   describe("deleting an embedded document", function() {
     it("should delete the embedded document", function(done) {
@@ -64,8 +69,20 @@ describe("LiveDocument", function() {
             })
           })
         })
-      }) 
+      })
     })
-    it("any collections it belongs to should emit a remove event")
+    it("any collections it belongs to should emit a remove event", function(done) {
+      var post = BlogPost.create({"title": "herp"}, function() {
+        post.get("comments").create({body: "Yo cool post bro"}, function(comment) {
+          var postCopy = BlogPost.findOne(post.get("_id"), function() {
+            post.get("comments").at(0).remove(function() {
+              ;(typeof postCopy.get("comments").at(0)).should.equal("undefined")
+              ;(typeof post.get("comments").at(0)).should.equal("undefined")
+              done()
+            })
+          })
+        })
+      })
+    })
   })
 })
