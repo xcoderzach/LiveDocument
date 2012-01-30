@@ -55,12 +55,12 @@ describe "LiveDocument", ->
           thngs.should.equal(thngs)
           done()
 
-    # it "should not call the callback again when the thing gets updated", (done) ->
-    #   Thing.create {title: "A title", description: "w00t describing"}, (thing) ->
-    #     things = Thing.read {_id: thing.get("_id")}, (things) ->
-    #       things.at(0).set({title: "herp"})
-    #       things.save()
-    #       done() 
+      it "should not call the callback again when the thing gets updated", (done) ->
+        Thing.create {title: "A title", description: "w00t describing"}, (thing) ->
+          Thing.findOne {_id: thing.get("_id")}, (t) ->
+            t.set({title: "herp"})
+            t.save () ->
+              done()
  
       it "should fire the load event on the collection", (done) ->
         expected = {title: "A title", description: "w00t describing"}
