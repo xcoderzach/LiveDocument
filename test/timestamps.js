@@ -42,7 +42,7 @@ describe("LiveDocument", function() {
           post.save(function() {
             post.get("updatedAt").should.be.above(timeBeforeUpdate)
             post.get("updatedAt").should.be.above(post.get("createdAt"))
-            done()
+              done()
           })
         })
       })
