@@ -3,7 +3,6 @@ var EventEmitter      = require("events").EventEmitter , LiveDocument      = req
   , assert            = require("assert")
   , Mongolian         = require("mongolian")
   , User              = require("./models/user")()
-  , Profile           = User.Profile
 
   , db = new Mongolian("localhost/LiveDocumentTestDB")
 
@@ -15,7 +14,6 @@ describe("LiveDocument", function() {
     instanceLayer = new InstanceLayer(socket, db, "../../../test/models")
 
     User.setSocket(socket)
-    Profile.setSocket(socket)
 
     db.collection("users").remove({}, function(err) {
       done()
