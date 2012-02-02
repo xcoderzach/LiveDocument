@@ -85,4 +85,19 @@ describe("LiveDocument", function() {
       })
     })
   })
+  describe("updating an embedded document", function() {
+    it("should save the changes", function(done) {
+      var post = BlogPost.create({"title": "herp"}, function() {
+        post.get("comments").create({body: "Yo cool post bro"}, function(comment) {
+          comment.set({body: "herp derp"})
+          comment.save(function() {
+            BlogPost.findOne(post.get("_id"), function(post) {
+              post.get("comments").at(0).get("body").should.equal("herp derp")
+              done()
+            })
+          })
+        })
+      })
+    })
+  })
 })
