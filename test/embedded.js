@@ -99,5 +99,18 @@ describe("LiveDocument", function() {
         })
       })
     })
+    it("should update other documents with the changes", function(done) {
+      var p = BlogPost.create({"title": "herp"}, function() {
+        BlogPost.findOne(p.get("_id"), function(post) {
+          p.get("comments").create({body: "Yo cool post bro"}, function(comment) {
+            comment.set({body: "herp derp"})
+            comment.save(function() {
+              post.get("comments").at(0).get("body").should.equal("herp derp")
+              done()
+            })
+          })
+        })
+      })
+    })
   })
 })
