@@ -12,8 +12,8 @@ var User = LiveDocument.define("User")
 .key("name", { length: [3,24] })
 .key("job", { max: 140 })
  
+var instanceLayer
 describe("LiveDocument", function() {
-  var instanceLayer
   beforeEach(function(done) {
     var socket = new EventEmitter
 
@@ -30,23 +30,27 @@ describe("LiveDocument", function() {
     it("should garbage collect", function(done) {
       var numDone = 0
       function afterAll() {
-        //give it a couple of tix to GC
+        //give it a couple of tix
         process.nextTick(function() {
           process.nextTick(function() {
-            //instanceLayer.liveDocumentMongo.ids.should.eql({})
-            //LiveDocumentMongo.listeners.should.eql([]) 
-            //done()
+            instanceLayer.liveDocumentMongo.ids.should.eql({})
+            instanceLayer.liveDocumentMongo.embeddedIds.should.eql({})
+            LiveDocumentMongo.listeners.should.eql([]) 
+            done()
           })
         })
       }
-      for(var i = 0 ; i < 10 ; i++) {
+      for(var i = 0 ; i <= 10 ; i++) {
         User.create({"name": "Zach"}, function(user) {
-          console.log(user.get("_id"))
           user.on("change", function() {})
-          numDone++
-          if(numDone === 10) {
-            afterAll()
-          }
+          process.nextTick(function() {
+            user.stopListening()
+            numDone++
+
+            if(numDone === 10) {
+              afterAll()
+            }
+          })
         })
       }
     })
