@@ -20,14 +20,15 @@ describe("LiveDocument", function() {
     instanceLayer = new InstanceLayer(socket, db, "../../../test/models")
 
     User.socket = socket
-
+    
     db.collection("users").remove({}, function(err) {
       done()
     })
+
   }) 
   describe("when I do a lot of shit", function() {
 
-    it("should garbage collect", function(done) {
+    it("should garbage collect single document watchers", function(done) {
       var numDone = 0
       function afterAll() {
         //give it a couple of tix
@@ -35,7 +36,7 @@ describe("LiveDocument", function() {
           process.nextTick(function() {
             instanceLayer.liveDocumentMongo.ids.should.eql({})
             instanceLayer.liveDocumentMongo.embeddedIds.should.eql({})
-            LiveDocumentMongo.listeners.should.eql([]) 
+            User.listeners.should.eql({}) 
             done()
           })
         })
@@ -54,5 +55,36 @@ describe("LiveDocument", function() {
         })
       }
     })
+  //it("should garbage collect collection watchers", function(done) {
+  //  var numDone = 0
+  //  function afterAll() {
+  //    //give it a couple of tix
+  //    process.nextTick(function() {
+  //      process.nextTick(function() {
+  //        instanceLayer.liveDocumentMongo.ids.should.eql({})
+  //        instanceLayer.liveDocumentMongo.embeddedIds.should.eql({})
+  //        LiveDocumentMongo.listeners.should.eql([]) 
+  //        done()
+  //      })
+  //    })
+  //  }
+  //  for(var i = 0 ; i <= 10 ; i++) {
+  //    User.create({"name": "Zach"}, function(user) {
+  //      process.nextTick(function() {
+  //        user.stopListening()
+  //        numDone++
+  //
+  //        if(numDone === 10) {
+  //          User.find({}, function(users) {
+  //            users.stopListening()
+  //            process.nextTick(function() {
+  //              instanceLayer.liveDocumentMongo.ids.should.eql({})
+  //            })
+  //          })
+  //        }
+  //      })
+  //    })
+  //  }
+  //}) 
   })
 })        
