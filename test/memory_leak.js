@@ -53,37 +53,27 @@ describe("LiveDocument", function() {
         })
       }
     })
-  //it("should garbage collect collection watchers", function(done) {
-  //  var numDone = 0
-  //  function afterAll() {
-  //    //give it a couple of tix
-  //    process.nextTick(function() {
-  //      process.nextTick(function() {
-  //
-  //        instanceLayer.liveDocumentMongo.ids.should.eql({})
-  //        instanceLayer.liveDocumentMongo.embeddedIds.should.eql({})
-  //        LiveDocumentMongo.listeners.should.eql([]) 
-  //        done()
-  //      })
-  //    })
-  //  }
-  //  for(var i = 0 ; i <= 10 ; i++) {
-  //    User.create({"name": "Zach"}, function(user) {
-  //      process.nextTick(function() {
-  //        user.stopListening()
-  //        numDone++
-  //
-  //        if(numDone === 10) {
-  //          User.find({}, function(users) {
-  //            users.stopListening()
-  //            process.nextTick(function() {
-  //              instanceLayer.liveDocumentMongo.ids.should.eql({})
-  //            })
-  //          })
-  //        }
-  //      })
-  //    })
-  //  }
-  //}) 
+    it("should garbage collect collection watchers", function(done) {
+      var numDone = 0
+      function afterAll() {
+        //give it a couple of tix
+        ChangeDispatch.globalQueryListeners.should.eql([])
+        ChangeDispatch.globalIdListeners.should.eql({})
+        done()
+      }
+      for(var i = 0 ; i <= 10 ; i++) {
+        User.create({"name": "Zach"}, function(user) {
+          user.stopListening()
+          numDone++
+  
+          if(numDone === 10) {
+            User.find({}, function(users) {
+              users.stopListening()
+              afterAll()
+            })
+          }
+        })
+      }
+    }) 
   })
 })        
