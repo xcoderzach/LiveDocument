@@ -3,6 +3,7 @@ var EventEmitter    = require("events").EventEmitter
 , InstanceLayer     = require("../lib/drivers/mongodb/instance_layer")
 , assert            = require("assert")
 , Mongolian         = require("mongolian")
+, ChangeDispatch    = require("../lib/drivers/mongodb/change_dispatch")
 , LiveDocumentMongo = require("../lib/drivers/mongodb/live_document_mongo")
 
 , db = new Mongolian("localhost/LiveDocumentTestDB")
@@ -34,8 +35,9 @@ describe("LiveDocument", function() {
         //give it a couple of tix
         process.nextTick(function() {
           process.nextTick(function() {
-            instanceLayer.liveDocumentMongo.ids.should.eql({})
-            instanceLayer.liveDocumentMongo.embeddedIds.should.eql({})
+            instanceLayer.liveDocumentMongo.changeDispatch.ids.should.eql({})
+            ChangeDispatch.globalIdListeners.should.eql({})
+            //instanceLayer.liveDocumentMongo.embeddedIds.should.eql({})
             User.listeners.should.eql({}) 
             done()
           })
@@ -43,15 +45,11 @@ describe("LiveDocument", function() {
       }
       for(var i = 0 ; i <= 10 ; i++) {
         User.create({"name": "Zach"}, function(user) {
-          user.on("change", function() {})
-          process.nextTick(function() {
-            user.stopListening()
-            numDone++
-
-            if(numDone === 10) {
-              afterAll()
-            }
-          })
+          user.stopListening()
+          numDone++
+          if(numDone === 10) {
+            afterAll()
+          }
         })
       }
     })
@@ -61,6 +59,7 @@ describe("LiveDocument", function() {
   //    //give it a couple of tix
   //    process.nextTick(function() {
   //      process.nextTick(function() {
+  //
   //        instanceLayer.liveDocumentMongo.ids.should.eql({})
   //        instanceLayer.liveDocumentMongo.embeddedIds.should.eql({})
   //        LiveDocumentMongo.listeners.should.eql([]) 
