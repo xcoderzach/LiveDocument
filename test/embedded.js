@@ -23,6 +23,9 @@ describe("LiveDocument", function() {
       }
     })
   })
+  afterEach(function() {
+    instanceLayer.cleanup()
+  })
   describe("adding an embedded document", function() {
     it("should have created an associated embedded document", function(done) {
       var post = BlogPost.create({"title": "herp"}, function() {

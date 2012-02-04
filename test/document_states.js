@@ -1,7 +1,7 @@
 var EventEmitter      = require("events").EventEmitter
   , LiveDocument      = require("../index")
-  , LiveDocumentMongo = require("../lib/drivers/mongodb/live_document_mongo")
   , assert            = require("assert")
+  , InstanceLayer     = require("../lib/drivers/mongodb/instance_layer")
   , Mongolian         = require("mongolian")
 
   , db = new Mongolian("localhost/LiveDocumentTestDB")
@@ -13,18 +13,22 @@ var Thing = LiveDocument.define("Thing")
 
 
 Thing.socket = new EventEmitter
-var liveDocumentMongo = new LiveDocumentMongo(new EventEmitter, db)
-
    
 describe("LiveDocument", function() {
+  var instanceLayer
   beforeEach(function(done) {
     var socket = new EventEmitter
+
     Thing.socket = socket
-    liveDocumentMongo.setSocket(socket)
+    instanceLayer = new InstanceLayer(socket, db, __dirname + "/models")
+
     db.collection("things").remove({}, function(err) {
       done()
     })
   }) 
+  afterEach(function() {
+    instanceLayer.cleanup()
+  })
 
   describe(".load method", function() {
     it("should be called once the document loads", function(done) {

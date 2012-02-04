@@ -1,6 +1,6 @@
 { EventEmitter }      = require "events"
 LiveDocument          = require "../index"
-LiveDocumentMongo     = require "../lib/drivers/mongodb/live_document_mongo"
+InstanceLayer         = require "../lib/drivers/mongodb/instance_layer"
 assert                = require "assert"
 Mongolian             = require "mongolian"
 
@@ -8,24 +8,25 @@ db = new Mongolian("localhost/LiveDocumentTestDB")
 
 
 class Thing extends LiveDocument
-  @modelName = "Thing"
 
+  @modelName = "Thing"
   @socket = new EventEmitter
 
-  @key "title", { length: [3, 24] }
-  @key "description", { max: 140, required: true }
-
-liveDocumentMongo = new LiveDocumentMongo(new EventEmitter, db)
+  @key "title", { length: [3...24] }
+  @key "description", { max: 140 }
 
 describe "LiveDocument", ->
+  instanceLayer = null
   beforeEach (done) ->
     # clean out all of the old listeners from previous tests 
     socket = new EventEmitter
-    Thing.socket = socket
-    liveDocumentMongo.setSocket(socket)
+    Thing.setSocket socket
+    instanceLayer = new InstanceLayer(socket, db, __dirname + "/models")
     db.collection("things").remove {}, (err) ->
       done()
-
+  afterEach ->
+    instanceLayer.cleanup()
+ 
   describe "instances", ->
     describe ".set()", ->
       it "should update the value", ->
@@ -53,46 +54,25 @@ describe "LiveDocument", ->
           thing.get("description").should.equal "My Description"
           done()
         thing.should.equal self
+
       it "should fire change events for the attributes on the document instance that changed on set", (done) ->
         actualThing = Thing.create({title: "w00t", description: "woo hooo"})
         id = actualThing.get("_id")
-        copyOfThing = Thing.read({_id: id})
+        copyOfThing = Thing.read {_id: id}, () ->
 
-        actualThing.on "change:title", (val, oldVal, thing) ->
-          val.should.equal "newTitle"
-          oldVal.should.equal "w00t"
-          thing.get("title").should.equal "newTitle"
-          done()
-          
-        copyOfThing.on "change:title", (thing) ->
-          test.fail("this shouldn't be called until the thing has been saved")
-          done()
+          actualThing.on "change:title", (val, oldVal, thing) ->
+            val.should.equal "newTitle"
+            oldVal.should.equal "w00t"
+            thing.get("title").should.equal "newTitle"
+            done()
+            
+          actualThing.set {title: "newTitle"}
 
-        actualThing.set {title: "newTitle"}
-
-      it "should fire change events for the attributes on the document instance that changed on set", ->
-        actualThing = Thing.create({title: "w00t", description: "woo hooo"})
-        id = actualThing.get("_id")
-        copyOfThing = Thing.read({_id: id})
-
-        actualThing.on "change:title", (val, oldVal, thing) ->
-          val.should.equal "newTitle"
-          oldVal.should.equal "w00t"
-          thing.get("title").should.equal "newTitle"
-          
-        copyOfThing.on "change:title", (val, oldVal, thing) ->
-          val.should.equal "newTitle"
-          oldVal.should.equal "w00t"
-          thing.get("title").should.equal "newTitle"
-          done()
-
-        actualThing.set {title: "newTitle"}
-        actualThing.save()
- 
       it "should not infinite loop on nested set calls"
     describe ".get()", ->
-      it "should return the value", ->
-        thing = Thing.create {title: "w00t", description: "woo hooo"}
+      it "should return the value", (done) ->
+        thing = Thing.create {title: "w00t", description: "woo hooo"}, ->
+          done()
         thing.get("title").should.equal "w00t"
 
       #this is actually questionable, since there would be no way to "unbind"

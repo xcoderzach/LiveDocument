@@ -19,6 +19,9 @@ describe("LiveDocument", function() {
       done()
     })
   }) 
+  afterEach(function() {
+    instanceLayer.cleanup()
+  })
 
   describe(".editableBy method", function() { 
     describe("when given self", function() {

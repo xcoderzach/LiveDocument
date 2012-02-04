@@ -8,6 +8,7 @@ db = new Mongolian("localhost/LiveDocumentTestDB")
 
 
 describe "LiveDocument", ->
+  instanceLayer = null
   beforeEach (done) ->
     # clean out all of the old listeners from previous tests 
     socket = new EventEmitter
@@ -16,6 +17,8 @@ describe "LiveDocument", ->
     db.collection("things").remove {}, (err) ->
       done()
 
+  afterEach ->
+    instanceLayer.cleanup()
 
   describe ".read()", ->
 

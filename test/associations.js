@@ -26,6 +26,10 @@ describe("LiveDocument", function() {
       })
     })
   })
+  afterEach(function() {
+    instanceLayer.cleanup()
+    instanceLayer = null
+  })
   describe("one associated document", function() { 
     it("should be created if it doesn't exist", function(done) {
       var user = User.create({"name": "Zach Smith"}, function() {

@@ -1,34 +1,35 @@
 { EventEmitter }      = require "events"
 LiveDocument          = require "../index"
-LiveDocumentMongo     = require "../lib/drivers/mongodb/live_document_mongo"
+InstanceLayer         = require "../lib/drivers/mongodb/instance_layer"
 assert                = require "assert"
 Mongolian             = require "mongolian"
 
 db = new Mongolian("localhost/LiveDocumentTestDB")
 
 
-Thing = null
-liveDocumentMongo = new LiveDocumentMongo(new EventEmitter, db)
+getThing = () ->
+  class Thing extends LiveDocument
+    @modelName = "Thing"
+    @socket = new EventEmitter
 
+    @key "title", { length: [3...24] }
+    @key "description", { max: 140 }
+
+Thing = getThing()
 describe "LiveDocument", ->
+  instanceLayer = null
   beforeEach (done) ->
-    class Thing extends LiveDocument
-
-      @modelName = "Thing"
-      @socket = new EventEmitter
-
-      @key "title", { length: [3...24] }
-      @key "description", { max: 140 }
-     
+    Thing = getThing()
     # clean out all of the old listeners from previous tests 
     socket = new EventEmitter
-    Thing.socket = socket
-    liveDocumentMongo.setSocket(socket)
+    Thing.setSocket socket
+    instanceLayer = new InstanceLayer(socket, db, __dirname + "/models")
     db.collection("things").remove {}, (err) ->
-      process.nextTick ->
-        done()
- 
+      done()
 
+  afterEach ->
+   instanceLayer.cleanup()
+ 
   describe "beforeSave hook", () ->
     it "should be run before a model is saved and save if nothing is passed", (done) ->
       Thing.beforeSave (thing, ok) ->
@@ -69,4 +70,3 @@ describe "LiveDocument", ->
 
       Thing.create {title: "herp"}, () ->
         done()
-
