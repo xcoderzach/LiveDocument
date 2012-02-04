@@ -1,1 +1,1 @@
---require should --reporter spec
+--require should --reporter list

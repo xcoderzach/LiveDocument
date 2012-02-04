@@ -8,6 +8,7 @@ db = new Mongolian("localhost/LiveDocumentTestDB")
 
 
 describe "LiveDocument", ->
+  instanceLayer = null
   beforeEach (done) ->
     # clean out all of the old listeners from previous tests 
     socket = new EventEmitter
@@ -16,6 +17,8 @@ describe "LiveDocument", ->
     db.collection("things").remove {}, (err) ->
       done()
 
+  afterEach ->
+    instanceLayer.cleanup()
 
   describe ".read()", ->
 
@@ -54,6 +57,13 @@ describe "LiveDocument", ->
           thngs.loaded.should.equal true
           thngs.should.equal(thngs)
           done()
+
+      it "should not call the callback again when the thing gets updated", (done) ->
+        Thing.create {title: "A title", description: "w00t describing"}, (thing) ->
+          Thing.findOne {_id: thing.get("_id")}, (t) ->
+            t.set({title: "herp"})
+            t.save () ->
+              done()
  
       it "should fire the load event on the collection", (done) ->
         expected = {title: "A title", description: "w00t describing"}

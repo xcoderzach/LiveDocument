@@ -2,17 +2,10 @@ var EventEmitter      = require("events").EventEmitter , LiveDocument      = req
   , InstanceLayer     = require("../lib/drivers/mongodb/instance_layer")
   , assert            = require("assert")
   , Mongolian         = require("mongolian")
+  , User              = require("./models/user")()
 
   , db = new Mongolian("localhost/LiveDocumentTestDB")
 
-                                                 
-var User = LiveDocument.define("User")
-  .key("name", { length: [3,24] })
-  .key("job", { max: 140 })
-  .editableBy("self")
- 
-
-   
 describe("LiveDocument", function() {
   var instanceLayer
   beforeEach(function(done) {
@@ -20,12 +13,15 @@ describe("LiveDocument", function() {
 
     instanceLayer = new InstanceLayer(socket, db, "../../../test/models")
 
-    User.socket = socket
+    User.setSocket(socket)
 
     db.collection("users").remove({}, function(err) {
       done()
     })
   }) 
+  afterEach(function() {
+    instanceLayer.cleanup()
+  })
 
   describe(".editableBy method", function() { 
     describe("when given self", function() {
