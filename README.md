@@ -151,13 +151,14 @@ to chain them together.
 Contributing
 ------------
   
-  Ideas, feature requests, bug reports, etc are very welcome.  If you want to code something, you could finish
-a pending test.
+  Ideas, feature requests, bug reports, etc are very welcome.
 
-####TODO
-  * make it able to run by itself, as a server
-  * validations should actually run ;-)
-  * associations, embedded documents, etc
+####TODO Before it's releaseable
+  * make it able to run by itself, as a connect middleware
+  * has many associations should be embedded documents or
+  normal assocs
+  * get rid of coffeescript tests
+  * documentation
 
 <a name = "contributors"></a>
 Contributors
