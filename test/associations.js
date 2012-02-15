@@ -4,8 +4,8 @@ var EventEmitter      = require("events").EventEmitter
   , assert            = require("assert")
   , Mongolian         = require("mongolian")
   , db                = new Mongolian("localhost/LiveDocumentTestDB")
-  , User              = require("./models/user.js")
-  , Profile           = require("./models/profile.js")
+  , User              = require("./models/user")
+  , Profile           = require("./models/profile")
 
 //setup the hasOne association
 
@@ -57,15 +57,23 @@ describe("LiveDocument", function() {
     })
     it("should be chainable", function(done) {
       var user = User.create({"name": "Zach Smith"}, function() {
-        Profile.create({ userId: user.get("_id"), realName: "asdfasdfs" }, function() {
-          User.findOne(user.get("_id"), function(profile) {
-            var profile = user.assoc("profile", function() {
-              var prof = Profile.findOne({ userId: user.get("_id") }, function() {
-                profile.get("_id").should.equal(prof.get("_id"))
-                prof.get("realName").should.equal(profile.get("realName"))
-                done()
+        var user1 = User.create({name: "User 1"}, function() {
+          var user2 = User.create({name: "User 2"}, function() {
+            user1.assoc("contacts", function(contacts) {
+              contacts.add({userId: user2.get("_id"), type: "pending"})
+            })
+            user2.assoc("contacts", function(contacts) {
+              contacts.add({userId: user1.get("_id"), type: "pending"}).save(function() {
+                console.log("w00t")
+                User.findOne(user1.get("_id")).assoc("contacts", function(contacts) {
+                  contacts.at(0).assoc("user").assoc("contacts", function(contacts) {
+                    console.log("w00t")
+                  })
+                })   
               })
             })
+            //find the user again so that contacts aren't cached 
+            
           })
         })
       })
