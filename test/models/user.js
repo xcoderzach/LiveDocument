@@ -1,11 +1,10 @@
 var LiveDocument = require("../../index")
+  , Profile      = require("./profile")
 
-module.exports = function() {
+var User = LiveDocument.define("User")
+  .key("name", { length: [3,24] })
+  .key("job", { max: 140 })
+  .editableBy("self")
+  .one(Profile)
 
-  var User = LiveDocument.define("User")
-    .key("name", { length: [3,24] })
-    .key("job", { max: 140 })
-    .editableBy("self")
-
-  return User 
-}
+module.exports = User 

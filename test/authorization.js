@@ -2,7 +2,7 @@ var EventEmitter      = require("events").EventEmitter , LiveDocument      = req
   , InstanceLayer     = require("../lib/drivers/mongodb/instance_layer")
   , assert            = require("assert")
   , Mongolian         = require("mongolian")
-  , User              = require("./models/user")()
+  , User              = require("./models/user")
 
   , db = new Mongolian("localhost/LiveDocumentTestDB")
 

@@ -4,11 +4,10 @@ var EventEmitter      = require("events").EventEmitter
   , assert            = require("assert")
   , Mongolian         = require("mongolian")
   , db                = new Mongolian("localhost/LiveDocumentTestDB")
-  , User              = require("./models/user.js")()
-  , Profile           = require("./models/profile.js")()
+  , User              = require("./models/user.js")
+  , Profile           = require("./models/profile.js")
 
 //setup the hasOne association
-User.one(Profile)
 
 describe("LiveDocument", function() {
   var instanceLayer
@@ -56,5 +55,20 @@ describe("LiveDocument", function() {
         })
       })
     })
+    it("should be chainable", function(done) {
+      var user = User.create({"name": "Zach Smith"}, function() {
+        Profile.create({ userId: user.get("_id"), realName: "asdfasdfs" }, function() {
+          User.findOne(user.get("_id"), function(profile) {
+            var profile = user.assoc("profile", function() {
+              var prof = Profile.findOne({ userId: user.get("_id") }, function() {
+                profile.get("_id").should.equal(prof.get("_id"))
+                prof.get("realName").should.equal(profile.get("realName"))
+                done()
+              })
+            })
+          })
+        })
+      })
+    }) 
   })
 })
