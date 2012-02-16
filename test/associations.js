@@ -72,8 +72,6 @@ describe("LiveDocument", function() {
                 })   
               })
             })
-            //find the user again so that contacts aren't cached 
-            
           })
         })
       })
