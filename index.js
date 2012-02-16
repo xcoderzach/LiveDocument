@@ -1,1 +1,1 @@
-module.exports = require("./lib/live_document")
+module.exports = require("./lib/document")
