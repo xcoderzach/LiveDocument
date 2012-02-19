@@ -30,10 +30,10 @@ describe("LiveDocument", function() {
   describe("client ids", function() {
     it("should give a unique clientId to each document", function(done) {
       var p = BlogPost.create({title: "herpderp"}, function(post) {
-        post.cid.should.equal(p.cid)
+        post.id.should.equal(p.id)
         var foundP = BlogPost.findOne(p.get("_id"), function(foundPost) {
-          foundP.cid.should.equal(foundPost.cid)
-          foundP.cid.should.not.equal(post.cid)
+          foundP.id.should.equal(foundPost.id)
+          foundP.id.should.not.equal(post.id)
           done()
         })
       })
