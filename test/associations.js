@@ -55,26 +55,5 @@ describe("LiveDocument", function() {
         })
       })
     })
-    it("should be chainable", function(done) {
-      var user = User.create({"name": "Zach Smith"}, function() {
-        var user1 = User.create({name: "User 1"}, function() {
-          var user2 = User.create({name: "User 2"}, function() {
-            user1.assoc("contacts", function(contacts) {
-              contacts.add({userId: user2.get("_id"), type: "pending"})
-            })
-            user2.assoc("contacts", function(contacts) {
-              contacts.add({userId: user1.get("_id"), type: "pending"}).save(function() {
-                console.log("w00t")
-                User.findOne(user1.get("_id")).assoc("contacts", function(contacts) {
-                  contacts.at(0).assoc("user").assoc("contacts", function(contacts) {
-                    console.log("w00t")
-                  })
-                })   
-              })
-            })
-          })
-        })
-      })
-    }) 
   })
 })
