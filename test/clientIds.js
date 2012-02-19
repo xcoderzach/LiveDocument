@@ -39,4 +39,9 @@ describe("LiveDocument", function() {
       })
     })
   })
+  describe(".keys() method", function() {
+    it("should return a list of the keys for the document", function() {
+      BlogPost.create({title: "herpderp"}).keys().should.eql(["title"])
+    })
+  })
 })
