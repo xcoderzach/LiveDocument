@@ -41,7 +41,7 @@ describe "LiveDocument", ->
       Thing.beforeSave (thing, notOk) ->
           notOk("derp")
       thing = new Thing {title: "w00t"}
-      thing.on "error", (thing, err) ->
+      thing.on "error", (err) ->
         err.should.equal("derp")
         process.nextTick ->
           done()

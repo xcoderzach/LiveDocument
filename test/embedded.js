@@ -29,7 +29,9 @@ describe("LiveDocument", function() {
   describe("adding an embedded document", function() {
     it("should have created an associated embedded document", function(done) {
       var post = BlogPost.create({"title": "herp"}, function() {
+        console.log("w00t1")
         post.assoc("comments").create({body: "Yo cool post bro"}, function(comment) {
+          console.log("w00t2")
           post.assoc("comments").at(0).should.equal(comment)
           comment.get("body").should.equal("Yo cool post bro")
           done()
