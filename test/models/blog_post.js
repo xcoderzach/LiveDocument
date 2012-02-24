@@ -1,13 +1,9 @@
-module.exports = function() {
-  var LiveDocument = require("../../index")
-    , EmbeddedLiveDocument = require("../../lib/embedded.js")
+var LiveDocument = require("../../index")
+  , EmbeddedLiveDocument = require("../../lib/embedded.js")
 
-  Comment = EmbeddedLiveDocument.define("Comment")
-    .key("body", { max: 124 })
+var Comment = EmbeddedLiveDocument.define("Comment")
+  .key("body", { max: 124 })
 
-  BlogPost = LiveDocument.define("BlogPost")
-    .key("title", { length: [3,24] })
-    .many(Comment)
-
-  return BlogPost
-}
+var BlogPost = module.exports = LiveDocument.define("BlogPost")
+  .key("title", { length: [3,24] })
+  .many(Comment)

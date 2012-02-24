@@ -4,11 +4,10 @@ var EventEmitter      = require("events").EventEmitter
   , assert            = require("assert")
   , Mongolian         = require("mongolian")
   , db                = new Mongolian("localhost/LiveDocumentTestDB")
-  , User              = require("./models/user.js")()
-  , Profile           = require("./models/profile.js")()
+  , User              = require("./models/user")
+  , Profile           = require("./models/profile")
 
 //setup the hasOne association
-User.one(Profile)
 
 describe("LiveDocument", function() {
   var instanceLayer
