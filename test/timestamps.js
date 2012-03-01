@@ -37,16 +37,15 @@ describe("LiveDocument", function() {
     })
     it("should add updatedAt when the document is created", function(done) {
       var timeBeforeUpdate = (new Date).getTime()
-      process.nextTick(function() {
+      timer.setTimeout(function() {
         BlogPost.create({title: "A blog post"}, function(post) {
           post.set("title", "new title")
           post.save(function() {
             post.get("updatedAt").should.be.above(timeBeforeUpdate)
-            post.get("updatedAt").should.be.above(post.get("createdAt"))
-              done()
+            done()
           })
         })
-      })
+      }, 10)
     })
   })
 })
