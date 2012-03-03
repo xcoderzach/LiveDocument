@@ -35,8 +35,8 @@ describe "LiveDocument", ->
     it "should update a document", (done) ->
       doc = {title: "A title", description: "w00t describd"}
       Thing.create doc, (thing) ->
-        id = thing.get("_id")
-        Thing.update id, {title: "new Title"}, (newDoc) ->
+        thing.set {title: "new Title"}
+        thing.save (newDoc) ->
           newDoc.get("title").should.equal "new Title"
           newDoc.get("description").should.equal doc.description
           done()
@@ -45,9 +45,10 @@ describe "LiveDocument", ->
       doc = {title: "A title", description: "w00t describd"}
       Thing.create doc, (thing) ->
         id = thing.get("_id")
-        thing.on "change", (newDoc) ->
+        thing.on "saved", (newDoc) ->
           newDoc.get("title").should.equal "new Title"
           newDoc.get("description").should.equal doc.description
           done()
 
-        Thing.update id, {title: "new Title"}
+        thing.set "title", "new Title"
+        thing.save()
