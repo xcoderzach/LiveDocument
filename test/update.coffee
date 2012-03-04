@@ -27,7 +27,7 @@ describe "LiveDocument", ->
     db.collection("things").remove {}, (err) ->
       done()
 
-  afterEach ->
+  afterEach () ->
     instanceLayer.cleanup()
 
   describe ".update()", ->
@@ -43,12 +43,22 @@ describe "LiveDocument", ->
 
     it "should update other instances of the document", (done) ->
       doc = {title: "A title", description: "w00t describd"}
+      oneDone = false
       Thing.create doc, (thing) ->
         id = thing.get("_id")
         thing.on "saved", (newDoc) ->
           newDoc.get("title").should.equal "new Title"
           newDoc.get("description").should.equal doc.description
-          done()
+          if oneDone
+            done()
+          else 
+            oneDone = true
 
         thing.set "title", "new Title"
-        thing.save()
+        thing.save () ->
+          if oneDone
+            done()
+          else 
+            oneDone = true
+          
+          done
