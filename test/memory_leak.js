@@ -1,6 +1,6 @@
 var EventEmitter    = require("events").EventEmitter 
 , LiveDocument      = require("../index")
-, InstanceLayer     = require("../lib/drivers/mongodb/instance_layer")
+, LiveDocumentMongo     = require("../lib/drivers/mongodb/live_document_mongo")
 , assert            = require("assert")
 , Mongolian         = require("mongolian")
 , ChangeDispatch    = require("../lib/drivers/mongodb/change_dispatch")
@@ -13,12 +13,12 @@ var User = LiveDocument.define("User")
 .key("name", { length: [3,24] })
 .key("job", { max: 140 })
  
-var instanceLayer
+var liveDocumentMongo
 describe("LiveDocument", function() {
   beforeEach(function(done) {
     var socket = new EventEmitter
 
-    instanceLayer = new InstanceLayer(socket, db, "../../../test/models")
+    liveDocumentMongo = new LiveDocumentMongo(socket, db, "../../../test/models")
 
     User.socket = socket
     
@@ -35,9 +35,8 @@ describe("LiveDocument", function() {
         //give it a couple of tix
         process.nextTick(function() {
           process.nextTick(function() {
-            instanceLayer.liveDocumentMongo.changeDispatch.ids.should.eql({})
+            liveDocumentMongo.changeDispatch.ids.should.eql({})
             ChangeDispatch.globalIdListeners.should.eql({})
-            //instanceLayer.liveDocumentMongo.embeddedIds.should.eql({})
             User.listeners.should.eql({}) 
             done()
           })

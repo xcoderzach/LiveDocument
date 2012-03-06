@@ -1,6 +1,6 @@
 var EventEmitter      = require("events").EventEmitter
   , LiveDocument      = require("../index")
-  , InstanceLayer     = require("../lib/drivers/mongodb/instance_layer")
+  , LiveDocumentMongo = require("../lib/drivers/mongodb/live_document_mongo")
   , assert            = require("assert")
   , Mongolian         = require("mongolian")
   , db                = new Mongolian("localhost/LiveDocumentTestDB")
@@ -10,11 +10,11 @@ var EventEmitter      = require("events").EventEmitter
 //setup the hasOne association
 
 describe("LiveDocument", function() {
-  var instanceLayer
+  var liveDocumentMongo
   beforeEach(function(done) {
     var socket = new EventEmitter
 
-    instanceLayer = new InstanceLayer(socket, db, __dirname + "/models")
+    liveDocumentMongo = new LiveDocumentMongo(socket, db, __dirname + "/models")
 
     User.setSocket(socket)
     Profile.setSocket(socket)
@@ -26,8 +26,7 @@ describe("LiveDocument", function() {
     })
   })
   afterEach(function() {
-    instanceLayer.cleanup()
-    instanceLayer = null
+    liveDocumentMongo.cleanup()
   })
   describe("one associated document", function() { 
     it("should be created if it doesn't exist", function(done) {

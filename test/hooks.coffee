@@ -1,6 +1,6 @@
 { EventEmitter }      = require "events"
 LiveDocument          = require "../index"
-InstanceLayer         = require "../lib/drivers/mongodb/instance_layer"
+LiveDocumentMongo         = require "../lib/drivers/mongodb/live_document_mongo"
 assert                = require "assert"
 Mongolian             = require "mongolian"
 
@@ -17,18 +17,18 @@ getThing = () ->
 
 Thing = getThing()
 describe "LiveDocument", ->
-  instanceLayer = null
+  liveDocumentMongo = null
   beforeEach (done) ->
     Thing = getThing()
     # clean out all of the old listeners from previous tests 
     socket = new EventEmitter
     Thing.setSocket socket
-    instanceLayer = new InstanceLayer(socket, db, __dirname + "/models")
+    liveDocumentMongo = new LiveDocumentMongo(socket, db, __dirname + "/models")
     db.collection("things").remove {}, (err) ->
       done()
 
   afterEach ->
-   instanceLayer.cleanup()
+   liveDocumentMongo.cleanup()
  
   describe "beforeSave hook", () ->
     it "should be run before a model is saved and save if nothing is passed", (done) ->

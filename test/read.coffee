@@ -1,24 +1,23 @@
 { EventEmitter }      = require "events"
-InstanceLayer         = require "../lib/drivers/mongodb/instance_layer"
+LiveDocumentMongo     = require "../lib/drivers/mongodb/live_document_mongo"
 assert                = require "assert"
 Mongolian             = require "mongolian"
 Thing                 = require "./models/thing"
 
 db = new Mongolian("localhost/LiveDocumentTestDB")
 
-
 describe "LiveDocument", ->
-  instanceLayer = null
+  liveDocumentMongo = null
   beforeEach (done) ->
     # clean out all of the old listeners from previous tests 
     socket = new EventEmitter
     Thing.setSocket(socket)
-    instanceLayer = new InstanceLayer(socket, db, "../../../test/models")
+    liveDocumentMongo = new LiveDocumentMongo(socket, db, "../../../test/models")
     db.collection("things").remove {}, (err) ->
       done()
 
   afterEach ->
-    instanceLayer.cleanup()
+    liveDocumentMongo.cleanup()
 
   describe ".read()", ->
 

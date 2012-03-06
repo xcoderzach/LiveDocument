@@ -1,17 +1,17 @@
 var EventEmitter      = require("events").EventEmitter
   , LiveDocument      = require("../index")
-  , InstanceLayer     = require("../lib/drivers/mongodb/instance_layer")
+  , LiveDocumentMongo     = require("../lib/drivers/mongodb/live_document_mongo")
   , assert            = require("assert")
   , Mongolian         = require("mongolian")
   , BlogPost          = require("./models/blog_post.js")
   , db = new Mongolian("localhost/LiveDocumentTestDB")
 
 describe("LiveDocument", function() {
-  var instanceLayer
+  var liveDocumentMongo
   beforeEach(function(done) {
     var socket = new EventEmitter
 
-    instanceLayer = new InstanceLayer(socket, db, __dirname + "/models")
+    liveDocumentMongo = new LiveDocumentMongo(socket, db, __dirname + "/models")
 
     BlogPost.setSocket(socket)
 
@@ -24,12 +24,11 @@ describe("LiveDocument", function() {
     })
   })
   afterEach(function() {
-    instanceLayer.cleanup()
+    liveDocumentMongo.cleanup()
   })
   describe("adding an embedded document", function() {
     it("should have created an associated embedded document", function(done) {
       var post = BlogPost.create({"title": "herp"}, function() {
-        console.log("w00t1")
         post.assoc("comments").create({body: "Yo cool post bro"}, function(comment) {
           console.log("w00t2")
           post.assoc("comments").at(0).should.equal(comment)
@@ -81,8 +80,10 @@ describe("LiveDocument", function() {
         post.assoc("comments").create({body: "Yo cool post bro"}, function(comment) {
           var postCopy = BlogPost.findOne(post.get("_id"), function() {
             post.assoc("comments").at(0).remove(function() {
-              ;(typeof postCopy.assoc("comments").at(0)).should.equal("undefined")
-              ;(typeof post.assoc("comments").at(0)).should.equal("undefined")
+              process.nextTick(function() {
+                ;(typeof postCopy.assoc("comments").at(0)).should.equal("undefined")
+                ;(typeof post.assoc("comments").at(0)).should.equal("undefined")
+              })
               done()
             })
           })
@@ -96,6 +97,7 @@ describe("LiveDocument", function() {
         post.assoc("comments").create({body: "Yo cool post bro"}, function(comment) {
           comment.set({body: "herp derp"})
           comment.save(function() {
+
             BlogPost.findOne(post.get("_id"), function(post) {
               post.assoc("comments").at(0).get("body").should.equal("herp derp")
               done()
