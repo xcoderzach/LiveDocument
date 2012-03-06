@@ -1,17 +1,17 @@
 var EventEmitter      = require("events").EventEmitter
   , LiveDocument      = require("../index")
-  , InstanceLayer     = require("../lib/drivers/mongodb/instance_layer")
+  , LiveDocumentMongo     = require("../lib/drivers/mongodb/live_document_mongo")
   , assert            = require("assert")
   , Mongolian         = require("mongolian")
   , BlogPost          = require("./models/blog_post.js")
   , db = new Mongolian("localhost/LiveDocumentTestDB")
 
 describe("LiveDocument", function() {
-  var instanceLayer
+  var liveDocumentMongo
   beforeEach(function(done) {
     var socket = new EventEmitter
 
-    instanceLayer = new InstanceLayer(socket, db, __dirname + "/models")
+    liveDocumentMongo = new LiveDocumentMongo(socket, db, __dirname + "/models")
 
     BlogPost.setSocket(socket)
 
@@ -24,8 +24,8 @@ describe("LiveDocument", function() {
     })
   })         
   afterEach(function() {
-    instanceLayer.cleanup()
-    instanceLayer = null
+    liveDocumentMongo.cleanup()
+    liveDocumentMongo = null
   }) 
   describe("client ids", function() {
     it("should give a unique clientId to each document", function(done) {
