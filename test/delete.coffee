@@ -25,7 +25,7 @@ describe "LiveDocument", ->
     ChangeDispatch.globalQueryListeners = []
 
     liveDocumentMongo = new LiveDocumentMongo(socket, db, __dirname + "/models")
-    db.collection("things").remove {}, (err) ->
+    db.collection("things").remove (err) ->
       done()
   afterEach ->
     liveDocumentMongo.cleanup()
@@ -35,26 +35,19 @@ describe "LiveDocument", ->
 
     it "should remove the item", (done) ->
       Thing.create {title: "herp", description: "derp"}, (thing) ->
-        Thing.delete {_id: thing.get("_id")}, ->
-          Thing.read {_id: thing.get("_id")}, (things) ->
+        thing.remove ->
+          Thing.find {_id: thing.get("_id")}, (things) ->
             things.length.should.equal 0
             done()
-
-    it "should send a delete notification to another instance of the same item", (done) ->
-      thing = Thing.create {title: "herp", description: "derp"}, ->
-        thing.on "delete", (thing) ->
-          thing.deleted.should.equal true
-          done()
-        Thing.delete {_id: thing.get("_id")}
 
     it "should send a remove notification to collections that contain that item", (done) ->
       Thing.create {title: "herp", description: "derp"}, (thing) ->
         things = Thing.read {}, ->
           things.length.should.equal 1
+          things.at(0).remove()
         things.on "remove", ->
           things.length.should.equal 0
           done()
-        Thing.delete {_id: thing.get("_id")}
     it "should fire a deleting event"
 
   describe ".remove() instance", ->

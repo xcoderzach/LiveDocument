@@ -33,8 +33,6 @@ describe("LiveDocument", function() {
     it("should have the correct constructor methods", function() {
       Thing.create.should.be.a("function")
       Thing.read.should.be.a("function")
-      Thing.update.should.be.a("function")
-      Thing.delete.should.be.a("function")
     })
     // we'll just test a few
     it("should have the correct prototype methods", function(done) {
