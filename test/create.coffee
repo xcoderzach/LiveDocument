@@ -43,7 +43,7 @@ describe "LiveDocument", ->
         (typeof thing.get("_id")).should.equal "string"
 
       it "should send an insert message to a collection to which it fits", (done) ->
-        things = Thing.read {priority: {$lt: 10}}
+        things = Thing.find {priority: {$lt: 10}}
         things.length.should.equal 0
         things.on "insert", ->
           things.length.should.equal 1
@@ -51,7 +51,7 @@ describe "LiveDocument", ->
         Thing.create { title: "herp derp", priority: 5 }
 
       it "should not send an insert message to a collection to which it doesn't fits", (done) ->
-        things = Thing.read {priority: {$lt: 10}}
+        things = Thing.find {priority: {$lt: 10}}
         things.length.should.equal 0
   
         things.on "insert", ->

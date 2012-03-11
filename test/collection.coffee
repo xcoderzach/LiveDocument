@@ -32,7 +32,7 @@ describe "LiveDocument", ->
       it "should return the item at index given", (done) ->
         Thing.create { title: "w000t" }, ->
           Thing.create { title: "w000t2" }, ->
-            things = Thing.read {}, ->
+            things = Thing.find {}, ->
               things.at(0).get("title").should.equal "w000t"
               things.at(1).get("title").should.equal "w000t2"
               done()
@@ -42,7 +42,7 @@ describe "LiveDocument", ->
           Thing.create { title: "w000t2" }, (thing2) ->
             id1 = thing1.get("_id")
             id2 = thing2.get("_id")
-            things = Thing.read {}, ->
+            things = Thing.find {}, ->
               things.get(id1).get("title").should.equal "w000t"
               things.get(id2).get("title").should.equal "w000t2"
               done()
@@ -52,7 +52,7 @@ describe "LiveDocument", ->
           Thing.create { title: "derp", priority: 10 }, ->
             Thing.create { title: "herp", priority: 100 }, ->
               Thing.create { title: "herp", priority: 50 }, ->
-                things = Thing.read({}).sortBy "priority"
+                things = Thing.find({}).sortBy "priority"
                 things.on "load", () ->
                   things.at(0).get("priority").should.equal 10
                   things.at(1).get("priority").should.equal 50
@@ -63,7 +63,7 @@ describe "LiveDocument", ->
           Thing.create { title: "derp", priority: 10 }, ->
             Thing.create { title: "herp", priority: 100 }, ->
               Thing.create { title: "herp", priority: 50 }, ->
-                things = Thing.read({}).sortBy "priority"
+                things = Thing.find({}).sortBy "priority"
                 things.on "load", () ->
                   Thing.create { title: "derp", priority: 25 }, ->
                     Thing.create { title: "herp", priority: 75 }, ->
@@ -78,7 +78,7 @@ describe "LiveDocument", ->
           Thing.create { title: "derp", priority: 10 }, ->
             Thing.create { title: "herp", priority: 100 }, ->
               Thing.create { title: "herp", priority: 50 }, ->
-                things = Thing.read({}).sortBy "priority"
+                things = Thing.find({}).sortBy "priority"
                 things.on "load", () ->
                   things.at(1).set {priority: 150}
                   things.at(0).get("priority").should.equal 10

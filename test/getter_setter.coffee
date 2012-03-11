@@ -58,7 +58,7 @@ describe "LiveDocument", ->
       it "should fire change events for the attributes on the document instance that changed on set", (done) ->
         actualThing = Thing.create({title: "w00t", description: "woo hooo"})
         id = actualThing.get("_id")
-        copyOfThing = Thing.read {_id: id}, () ->
+        copyOfThing = Thing.find {_id: id}, () ->
 
           actualThing.on "change:title", (val, oldVal, thing) ->
             val.should.equal "newTitle"

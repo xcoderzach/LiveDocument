@@ -32,7 +32,7 @@ describe("LiveDocument", function() {
     it("should be created if it doesn't exist", function(done) {
       var user = User.create({"name": "Zach Smith"}, function() {
         user.assoc("profile", function(profile) {
-          Profile.findOne({ userId: user.get("_id") }, function(prof) {
+          Profile.findByKey("userId", user.get("_id"), function(prof) {
             prof.get("_id").should.equal(profile.get("_id"))
             done()
           })
@@ -44,7 +44,7 @@ describe("LiveDocument", function() {
         Profile.create({ userId: user.get("_id"), realName: "asdfasdfs" }, function() {
           User.findOne(user.get("_id"), function(profile) {
             var profile = user.assoc("profile", function() {
-              var prof = Profile.findOne({ userId: user.get("_id") }, function() {
+              var prof = Profile.findByKey("userId", user.get("_id"), function() {
                 profile.get("_id").should.equal(prof.get("_id"))
                 prof.get("realName").should.equal(profile.get("realName"))
                 done()

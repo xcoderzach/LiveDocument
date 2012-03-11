@@ -32,7 +32,7 @@ describe("LiveDocument", function() {
   describe("created with define", function() {
     it("should have the correct constructor methods", function() {
       Thing.create.should.be.a("function")
-      Thing.read.should.be.a("function")
+      Thing.find.should.be.a("function")
     })
     // we'll just test a few
     it("should have the correct prototype methods", function(done) {
@@ -42,7 +42,7 @@ describe("LiveDocument", function() {
       thing.save.should.be.a("function")
 
       Thing.create({title: "w0000t"}, function() {
-        Thing.read({}, function(things) {
+        Thing.find({}, function(things) {
           things.at(0).get("title").should.equal("w0000t")
           done()
         })

@@ -42,7 +42,7 @@ describe "LiveDocument", ->
 
     it "should send a remove notification to collections that contain that item", (done) ->
       Thing.create {title: "herp", description: "derp"}, (thing) ->
-        things = Thing.read {}, ->
+        things = Thing.find {}, ->
           things.length.should.equal 1
           things.at(0).remove()
         things.on "remove", ->

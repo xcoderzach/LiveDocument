@@ -19,13 +19,13 @@ describe "LiveDocument", ->
   afterEach ->
     liveDocumentMongo.cleanup()
 
-  describe ".read()", ->
+  describe ".find()", ->
 
     describe "with a query", ->
       it "should read a document", (done) ->
         document = { title: "I'm a title", description: "description" }
         Thing.create document, (t)->
-          Thing.read {title: "I'm a title"}, (things) ->
+          Thing.find {title: "I'm a title"}, (things) ->
             things.at(0).get("description").should.equal document.description
             things.at(0).get("title").should.equal document.title
             done()
@@ -36,7 +36,7 @@ describe "LiveDocument", ->
                    , {title: "A title 2", description: "w00t describing 2"}]
         Thing.create expected[0], ->
           Thing.create expected[1], ->
-            things = Thing.read {}, (docs) ->
+            things = Thing.find {}, (docs) ->
               process.nextTick ->
                 docs.at(0).get("title").should.equal expected[0].title
                 docs.at(0).get("description").should.equal expected[0].description
@@ -49,7 +49,7 @@ describe "LiveDocument", ->
       it "should set the loaded attribute on the collection", (done) ->
         expected = {title: "A title", description: "w00t describing"}
         Thing.create expected
-        things = Thing.read {}, (thngs) ->
+        things = Thing.find {}, (thngs) ->
  
           things.should.equal thngs
  
@@ -59,7 +59,7 @@ describe "LiveDocument", ->
 
       it "should not call the callback again when the thing gets updated", (done) ->
         Thing.create {title: "A title", description: "w00t describing"}, (thing) ->
-          Thing.findOne {_id: thing.get("_id")}, (t) ->
+          Thing.findOne thing.get("_id"), (t) ->
             t.set({title: "herp"})
             t.save () ->
               done()
@@ -67,7 +67,7 @@ describe "LiveDocument", ->
       it "should fire the load event on the collection", (done) ->
         expected = {title: "A title", description: "w00t describing"}
         Thing.create expected
-        things = Thing.read {}
+        things = Thing.find {}
         things.loaded.should.equal false
         things.on "load", (thngs) ->
  
@@ -79,15 +79,11 @@ describe "LiveDocument", ->
  
   describe "find()", ->
     it "should just alias read()", ->
-      Thing.find.should.equal(Thing.read)
+      Thing.find.should.equal(Thing.find)
  
   describe "findOne()", ->
     it "should find by id when given just a string", (done) ->
       t = Thing.create {title: "w000t"}, ->
         Thing.findOne t.get("_id"), (thing) ->
           thing.get("title").should.equal "w000t"
-          Thing.findOne {_id: t.get("_id")}, (thing) ->
-            thing.get("title").should.equal "w000t"
-            done()
-  describe "all()", ->
-    it "should find all the things"
+          done()
