@@ -45,5 +45,17 @@ describe("LiveDocument", function() {
         profile.save()
       })
     })
+    it("should set the values", function(done) {
+      Profile.create({ fullName: "Zach Smith" }, function(profile) {
+        try {
+        profile.get("fullName").should.equal("Zach Smith")
+        profile.get("first").should.equal("Zach")
+        profile.get("last").should.equal("Smith")
+        done()
+        } catch(e) {
+          console.log(e)
+        }
+      })
+    })
   })
 })
