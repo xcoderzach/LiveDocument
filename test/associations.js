@@ -32,9 +32,11 @@ describe("LiveDocument", function() {
     it("should be created if it doesn't exist", function(done) {
       var user = User.create({"name": "Zach Smith"}, function() {
         user.assoc("profile", function(profile) {
-          Profile.findByKey("userId", user.get("_id"), function(prof) {
-            prof.get("_id").should.equal(profile.get("_id"))
-            done()
+          profile.save(function() {
+            Profile.findByKey("userId", user.get("_id"), function(prof) {
+              prof.get("_id").should.equal(profile.get("_id"))
+              done()
+            })
           })
         })
       })
