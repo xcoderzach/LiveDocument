@@ -34,14 +34,13 @@ describe("LiveDocument", function() {
         Profile.create({ first: "Mach", last: "Sith" }, function(profile) {
           Profile.create({ first: "Jack", last: "Smit" }, function(profile) {
             Profile.find({}, function(profiles) {
-              profiles.filter(function(profile) {
-                var first = profile.get("first")
-                return first.charAt(first.length - 1) === "h"
-              })
               profiles.length.should.equal(2)
               profiles.at(0).get("first").should.equal("Zach")
               profiles.at(1).get("first").should.equal("Mach")
               done()
+            }).filter(function(profile) {
+              var first = profile.get("first")
+              return first.charAt(first.length - 1) === "h"
             })
           })
         })
