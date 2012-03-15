@@ -1,4 +1,4 @@
-var LiveDocument = require("../../index")
+var LiveDocument = require("../../lib/document")
   , Profile      = require("./profile")
 
 var User = module.exports = LiveDocument.define("User")

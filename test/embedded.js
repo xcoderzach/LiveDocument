@@ -1,6 +1,6 @@
 var EventEmitter      = require("events").EventEmitter
-  , LiveDocument      = require("../index")
-  , LiveDocumentMongo     = require("../lib/drivers/mongodb/live_document_mongo")
+  , LiveDocument      = require("../lib/document")
+  , LiveDocumentMongo     = require("../lib/server")
   , assert            = require("assert")
   , Mongolian         = require("mongolian")
   , BlogPost          = require("./models/blog_post.js")

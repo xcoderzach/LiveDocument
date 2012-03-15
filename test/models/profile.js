@@ -1,4 +1,4 @@
-var LiveDocument = require("../../index")
+var LiveDocument = require("../../lib/document")
 
 var Profile = LiveDocument.define("Profile")
   .key("realName")

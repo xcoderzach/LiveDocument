@@ -1,5 +1,5 @@
 { EventEmitter }      = require "events"
-LiveDocument          = require "../../index"
+LiveDocument          = require "../../lib/document"
 
 class Thing extends LiveDocument
 

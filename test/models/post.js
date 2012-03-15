@@ -1,4 +1,4 @@
-var LiveDocument = require("../../index")
+var LiveDocument = require("../../lib/document")
 
 // pass the server thing in because we don't acutally
 // run the client code on the client so we have to hack

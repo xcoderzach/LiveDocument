@@ -1,7 +1,6 @@
 { EventEmitter }      = require "events"
-LiveDocument          = require "../index"
-LiveDocumentMongo         = require "../lib/drivers/mongodb/live_document_mongo"
-ChangeDispatch        = require "../lib/drivers/mongodb/change_dispatch"
+LiveDocument          = require "../lib/document"
+LiveDocumentMongo     = require "../lib/server"
 assert                = require "assert"
 Mongolian             = require "mongolian"
 
@@ -22,7 +21,6 @@ describe "LiveDocument", ->
     # clean out all of the old listeners from previous tests 
     socket = new EventEmitter
     Thing.setSocket socket
-    ChangeDispatch.globalQueryListeners = []
 
     liveDocumentMongo = new LiveDocumentMongo(socket, db, __dirname + "/models")
     db.collection("things").remove (err) ->

@@ -1,4 +1,4 @@
-var EmbeddedLiveDocument = require("../../lib/embedded.js")
+var EmbeddedLiveDocument = require("../../lib/embedded")
 
 var Contact = module.exports = EmbeddedLiveDocument.define("Contact")
   , User = require("./user")

@@ -1,9 +1,9 @@
 { EventEmitter }      = require "events"
-LiveDocument          = require "../index"
+LiveDocument          = require "../lib/document"
 assert                = require "assert"
 Mongolian             = require "mongolian"
 _                     = require "underscore"
-LiveDocumentMongo         = require "../lib/drivers/mongodb/live_document_mongo"
+LiveDocumentMongo         = require "../lib/server"
 
 class Thing extends LiveDocument
 

@@ -1,5 +1,5 @@
 { EventEmitter }      = require "events"
-LiveDocumentMongo     = require "../lib/drivers/mongodb/live_document_mongo"
+LiveDocumentMongo     = require "../lib/server"
 assert                = require "assert"
 Mongolian             = require "mongolian"
 Thing                 = require "./models/thing"

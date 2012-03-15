@@ -27,7 +27,7 @@ Setting up the Server
   On the server:
 
 ```javascript
-var DocumentServer = require("live_document/lib/server")
+var DocumentServer = require("live_document").Server
   , AssetPipeline  = require("asset_pipeline")
   , connect        = require("connect")
   , io             = require("socket.io")
@@ -35,7 +35,7 @@ var DocumentServer = require("live_document/lib/server")
   , app
 
 app = connect()
-app.use(DocumentServer.middleware())
+app.use(DocumentServer())
 app.use(AssetPipeline.middleware())
 app.listen(3000)
 

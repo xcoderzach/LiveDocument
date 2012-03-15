@@ -1,4 +1,4 @@
-var LiveDocument = require("../../index")
+var LiveDocument = require("../../lib/document")
   , EmbeddedLiveDocument = require("../../lib/embedded.js")
 
 var Comment = EmbeddedLiveDocument.define("Comment")
