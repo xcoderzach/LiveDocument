@@ -22,13 +22,18 @@ Requirements
 Getting Started
 ===============
 
+LiveDocument is still in alpha and hasn't been optimized for use
+by itself, it requires the asset provider to serve it's assets
+as well as the require function for module support.
+
 Setting up the Server
 =====================
+
+  Here are the basics, without the asset Provider stuff
   On the server:
 
 ```javascript
 var DocumentServer = require("live_document").Server
-  , AssetPipeline  = require("asset_pipeline")
   , connect        = require("connect")
   , io             = require("socket.io")
   , paths          = require("paths")
@@ -36,13 +41,11 @@ var DocumentServer = require("live_document").Server
 
 app = connect()
 app.use(DocumentServer())
-app.use(AssetPipeline.middleware())
 app.listen(3000)
 
 io.listen(app)
 
 // Define the models that we want to serve
-DocumentServer.models(paths.join(__dirname, "app/models"))
 
 // The socket.io object
 DocumentServer.socket(io)
