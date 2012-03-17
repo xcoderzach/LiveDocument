@@ -13,12 +13,13 @@ var User = LiveDocument.define("User")
 .key("name", { length: [3,24] })
 .key("job", { max: 140 })
  
-var liveDocumentMongo
 describe("LiveDocument", function() {
+  var liveDocumentMongo
   beforeEach(function(done) {
     var socket = new EventEmitter
 
     liveDocumentMongo = new LiveDocumentMongo(socket, db, "../../../test/models")
+    liveDocumentMongo.cleanup()
 
     User.socket = socket
     
@@ -27,6 +28,9 @@ describe("LiveDocument", function() {
     })
 
   }) 
+  afterEach(function() {
+    liveDocumentMongo.cleanup()
+  })
   describe("when I do a lot of shit", function() {
 
     it("should garbage collect single document watchers", function(done) {

@@ -14,18 +14,22 @@ var Thing = LiveDocument.define("Thing")
 
 
 Thing.socket = new EventEmitter
-var liveDocumentMongo = new LiveDocumentMongo(new EventEmitter, db)
 
    
 describe("LiveDocument", function() {
+  var liveDocumentMongo
   beforeEach(function(done) {
     var socket = new EventEmitter
     Thing.socket = socket
+    liveDocumentMongo = new LiveDocumentMongo(new EventEmitter, db)
     liveDocumentMongo.setSocket(socket)
     db.collection("things").remove({}, function(err) {
       done()
     })
   }) 
+  afterEach(function() {
+    liveDocumentMongo.cleanup()
+  })
   describe("with an invalid title", function() {
     it("should not save", function(done) {
       var thing = Thing.create({title: "a", description: "herp derp"}, function() {

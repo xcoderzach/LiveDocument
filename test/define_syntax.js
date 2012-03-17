@@ -22,11 +22,8 @@ describe("LiveDocument", function() {
       done()
     })
   })
-  afterEach(function(done) {
+  afterEach(function() {
     liveDocumentMongo.cleanup()
-    process.nextTick(function() {
-      done()
-    })
   })
  
   describe("created with define", function() {
