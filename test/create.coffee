@@ -3,25 +3,23 @@ LiveDocument          = require "../lib/document"
 LiveDocumentMongo         = require "../lib/server"
 assert                = require "assert"
 Mongolian             = require "mongolian"
+socket                = new EventEmitter
+Document              = require "../lib/document"
+Document.setSocket(socket) 
 
 db = new Mongolian("localhost/LiveDocumentTestDB")
-
 
 class Thing extends LiveDocument
   @modelName = "Thing"
 
-  @socket = new EventEmitter
-
   @key "title", { length: [3...24] }
   @key "description", { max: 140 }
 
+liveDocumentMongo = new LiveDocumentMongo(socket, db, __dirname + "/models")
+
 describe "LiveDocument", ->
-  liveDocumentMongo = null
   beforeEach (done) ->
     # clean out all of the old listeners from previous tests 
-    socket = new EventEmitter
-    Thing.setSocket socket
-    liveDocumentMongo = new LiveDocumentMongo(socket, db, __dirname + "/models")
     db.collection("things").remove {}, (err) ->
       done()
   afterEach ->
