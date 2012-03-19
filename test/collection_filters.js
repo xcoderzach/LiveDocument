@@ -4,21 +4,27 @@ var EventEmitter      = require("events").EventEmitter
   , assert            = require("assert")
   , Mongolian         = require("mongolian")
   , db                = new Mongolian("localhost/LiveDocumentTestDB")
-  , User              = require("./models/user")
+  , Document          = require("../lib/document")
+  , socket            = new EventEmitter
+Document.setSocket(socket) 
+ 
+delete require.cache[require.resolve("./models/user")]
+delete require.cache[require.resolve("./models/profile")]
+
+var User              = require("./models/user")
   , Profile           = require("./models/profile")
+  , liveDocumentMongo = new LiveDocumentMongo(socket, db, __dirname + "/models")
+
+User.isServer = false
+Profile.isServer = false
+
+delete require.cache[require.resolve("./models/user")]
+delete require.cache[require.resolve("./models/profile")]
 
 //setup the hasOne association
 
 describe("LiveDocument", function() {
-  var liveDocumentMongo
   beforeEach(function(done) {
-    var socket = new EventEmitter
-
-    liveDocumentMongo = new LiveDocumentMongo(socket, db, __dirname + "/models")
-
-    User.setSocket(socket)
-    Profile.setSocket(socket)
-
     db.collection("users").remove({}, function(err) {
       db.collection("profiles").remove({}, function(err) {
         done()

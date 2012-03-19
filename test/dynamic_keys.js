@@ -7,6 +7,12 @@ var EventEmitter      = require("events").EventEmitter
   , User              = require("./models/user")
   , Profile           = require("./models/profile")
 
+User.isServer = false
+Profile.isServer = false
+
+delete require.cache[require.resolve("./models/user")]
+delete require.cache[require.resolve("./models/profile")]
+
 //setup the hasOne association
 
 describe("LiveDocument", function() {

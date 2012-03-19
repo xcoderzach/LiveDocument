@@ -5,10 +5,16 @@ Mongolian             = require "mongolian"
 socket                = new EventEmitter
 Document              = require "../lib/document"
 Document.setSocket(socket) 
+
+delete require.cache[require.resolve("./models/thing")]
+
 Thing                 = require "./models/thing"
+Thing.isServer = false
+
+delete require.cache[require.resolve("./models/thing")]
 
 db = new Mongolian("localhost/LiveDocumentTestDB")
-liveDocumentMongo = new LiveDocumentMongo(socket, db, "../../../test/models")
+liveDocumentMongo = new LiveDocumentMongo(socket, db, __dirname + "/models")
 
 describe "LiveDocument", ->
   beforeEach (done) ->
@@ -26,6 +32,7 @@ describe "LiveDocument", ->
         document = { title: "I'm a title", description: "description" }
         Thing.create document, (t)->
           Thing.find {title: "I'm a title"}, (things) ->
+            console.log(things.length)
             things.at(0).get("description").should.equal document.description
             things.at(0).get("title").should.equal document.title
             done()

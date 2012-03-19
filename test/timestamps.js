@@ -1,11 +1,17 @@
 var EventEmitter      = require("events").EventEmitter
   , timer             = require("timers")
   , LiveDocument      = require("../lib/document")
-  , LiveDocumentMongo     = require("../lib/server")
+  , LiveDocumentMongo = require("../lib/server")
   , assert            = require("assert")
   , Mongolian         = require("mongolian")
+  , Document          = require("../lib/document")
+  , socket                = new EventEmitter
+Document.setSocket(socket)  
   , BlogPost          = require("./models/blog_post.js")
   , db = new Mongolian("localhost/LiveDocumentTestDB")
+
+delete require.cache[require.resolve("./models/blog_post")]
+BlogPost.isServer = false
 
 describe("LiveDocument", function() {
   var liveDocumentMongo

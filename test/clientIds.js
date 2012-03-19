@@ -1,20 +1,17 @@
 var EventEmitter      = require("events").EventEmitter
-  , LiveDocument      = require("../lib/document")
-  , LiveDocumentMongo     = require("../lib/server")
   , assert            = require("assert")
   , Mongolian         = require("mongolian")
+  , db                = new Mongolian("localhost/LiveDocumentTestDB")
+  , socket            = new EventEmitter
+  , Document          = require("../lib/document")
+Document.setSocket(socket)
+var LiveDocumentMongo = require("../lib/server")
+  , liveDocumentMongo = new LiveDocumentMongo(socket, db, __dirname + "/models")
   , BlogPost          = require("./models/blog_post.js")
-  , db = new Mongolian("localhost/LiveDocumentTestDB")
+BlogPost.isServer     = false
 
 describe("LiveDocument", function() {
-  var liveDocumentMongo
   beforeEach(function(done) {
-    var socket = new EventEmitter
-
-    liveDocumentMongo = new LiveDocumentMongo(socket, db, __dirname + "/models")
-
-    BlogPost.setSocket(socket)
-
     db.collection("blogPosts").remove({}, function(err) {
       try {
         done()
@@ -25,7 +22,6 @@ describe("LiveDocument", function() {
   })         
   afterEach(function() {
     liveDocumentMongo.cleanup()
-    liveDocumentMongo = null
   }) 
   describe("client ids", function() {
     it("should give a unique clientId to each document", function(done) {

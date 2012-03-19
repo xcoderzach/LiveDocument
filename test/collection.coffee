@@ -1,27 +1,23 @@
 { EventEmitter }      = require "events"
-LiveDocument          = require "../lib/document"
-LiveDocumentMongo         = require "../lib/server"
+LiveDocumentMongo     = require "../lib/server"
 assert                = require "assert"
 Mongolian             = require "mongolian"
+socket                = new EventEmitter
+Document              = require "../lib/document"
+Document.setSocket(socket) 
+
+delete require.cache[require.resolve("./models/thing")]
+
+Thing                 = require "./models/thing"
+Thing.isServer = false
+
+delete require.cache[require.resolve("./models/thing")]
 
 db = new Mongolian("localhost/LiveDocumentTestDB")
-
-
-class Thing extends LiveDocument
-
-  @modelName = "Thing"
-  @socket = new EventEmitter
-
-  @key "title", { length: [3...24] }
-  @key "description", { max: 140 }
-
+liveDocumentMongo = new LiveDocumentMongo(socket, db, __dirname + "/models")
+ 
 describe "LiveDocument", ->
-  liveDocumentMongo = null
   beforeEach (done) ->
-    # clean out all of the old listeners from previous tests 
-    socket = new EventEmitter
-    Thing.setSocket socket
-    liveDocumentMongo = new LiveDocumentMongo(socket, db, __dirname + "/models")
     db.collection("things").remove {}, (err) ->
       done()
   afterEach ->
@@ -33,8 +29,8 @@ describe "LiveDocument", ->
         Thing.create { title: "w000t" }, ->
           Thing.create { title: "w000t2" }, ->
             things = Thing.find {}, ->
-              things.at(0).get("title").should.equal "w000t"
-              things.at(1).get("title").should.equal "w000t2"
+              things.at(1).get("title").should.equal "w000t"
+              things.at(0).get("title").should.equal "w000t2"
               done()
     describe ".get()", ->
       it "should return the item with given id", (done) ->

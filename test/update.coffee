@@ -7,18 +7,14 @@ LiveDocumentMongo     = require "../lib/server"
 socket                = new EventEmitter
 Document              = require "../lib/document"
 Document.setSocket(socket)
+Thing                 = require "./models/thing"
+Thing.isServer        = false
 
+delete require.cache[require.resolve("./models/thing")]
 
-class Thing extends LiveDocument
-  @modelName = "Thing"
-
-  @key "title", { length: [3...24], required: true }
-  @key "description", { max: 140 }
-
- 
 db = new Mongolian("localhost/LiveDocumentTestDB")
+liveDocumentMongo = new LiveDocumentMongo(socket, db, __dirname + "/models") 
 
-liveDocumentMongo = new LiveDocumentMongo(socket, db, "../../../test/models")
 
 describe "LiveDocument", ->
   beforeEach (done) ->

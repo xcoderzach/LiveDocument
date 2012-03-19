@@ -7,10 +7,19 @@ var EventEmitter      = require("events").EventEmitter
   , socket            = new EventEmitter
 Document.setSocket(socket) 
 
+  delete require.cache[require.resolve("./models/user")]
+delete require.cache[require.resolve("./models/profile")]
+
 var User              = require("./models/user")
   , Profile           = require("./models/profile")
   , liveDocumentMongo = new LiveDocumentMongo(socket, db, __dirname + "/models")
-//setup the hasOne association
+
+User.isServer = false
+Profile.isServer = false
+
+delete require.cache[require.resolve("./models/user")]
+delete require.cache[require.resolve("./models/profile")]
+
 
 describe("LiveDocument", function() {
   beforeEach(function(done) {

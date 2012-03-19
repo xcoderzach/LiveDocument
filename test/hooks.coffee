@@ -12,7 +12,7 @@ db = new Mongolian("localhost/LiveDocumentTestDB")
 getThing = () ->
   class Thing extends LiveDocument
     @modelName = "Thing"
-
+    @isServer = false
     @key "title", { length: [3...24] }
     @key "description", { max: 140 }
 

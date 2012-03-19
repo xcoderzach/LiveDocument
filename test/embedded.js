@@ -7,9 +7,19 @@ var EventEmitter      = require("events").EventEmitter
   , socket            = new EventEmitter
 Document.setSocket(socket) 
 
+delete require.cache[require.resolve("./models/blog_post")]
+delete require.cache[require.resolve("./models/comment")]
+
 var BlogPost          = require("./models/blog_post.js")
+  , Comment           = require("./models/comment.js")
   , db                = new Mongolian("localhost/LiveDocumentTestDB")
   , liveDocumentMongo = new LiveDocumentMongo(socket, db, __dirname + "/models")
+
+BlogPost.isServer = false
+Comment.isServer = false
+
+delete require.cache[require.resolve("./models/blog_post")]
+delete require.cache[require.resolve("./models/comment")]
 
 describe("LiveDocument", function() {
   beforeEach(function(done) {
