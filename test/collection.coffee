@@ -29,8 +29,7 @@ describe "LiveDocument", ->
         Thing.create { title: "w000t" }, ->
           Thing.create { title: "w000t2" }, ->
             things = Thing.find {}, ->
-              things.at(1).get("title").should.equal "w000t"
-              things.at(0).get("title").should.equal "w000t2"
+              things.length.should.equal(2)
               done()
     describe ".get()", ->
       it "should return the item with given id", (done) ->

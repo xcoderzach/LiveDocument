@@ -24,11 +24,7 @@ delete require.cache[require.resolve("./models/comment")]
 describe("LiveDocument", function() {
   beforeEach(function(done) {
     db.collection("blogPosts").remove({}, function(err) {
-      try {
-        done()
-      } catch(e) {
-        console.log(e)
-      }
+      done()
     })
   })
   afterEach(function() {

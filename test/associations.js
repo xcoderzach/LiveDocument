@@ -7,7 +7,7 @@ var EventEmitter      = require("events").EventEmitter
   , socket            = new EventEmitter
 Document.setSocket(socket) 
 
-  delete require.cache[require.resolve("./models/user")]
+delete require.cache[require.resolve("./models/user")]
 delete require.cache[require.resolve("./models/profile")]
 
 var User              = require("./models/user")
@@ -23,7 +23,6 @@ delete require.cache[require.resolve("./models/profile")]
 
 describe("LiveDocument", function() {
   beforeEach(function(done) {
-
     db.collection("users").remove({}, function(err) {
       db.collection("profiles").remove({}, function(err) {
         done()

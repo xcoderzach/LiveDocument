@@ -32,6 +32,7 @@ describe "LiveDocument", ->
       it "should send a create message", (done) ->
         document = { title: "w00t", description: "w00t w00t" }
         Thing.create document, (doc) ->
+          console.log("calllback called")
           doc.get("title").should.eql document.title
           doc.get("description").should.eql document.description
           done()

@@ -1,28 +1,20 @@
 var EventEmitter      = require("events").EventEmitter
-  , LiveDocument      = require("../lib/document")
   , LiveDocumentMongo = require("../lib/server")
   , assert            = require("assert")
   , Mongolian         = require("mongolian")
-
+  , Document          = require("../lib/document")
+  , socket            = new EventEmitter
+Document.setSocket(socket) 
   , db = new Mongolian("localhost/LiveDocumentTestDB")
 
+delete require.cache[require.resolve("./models/thing")]
+var Thing = require("./models/thing")
+delete require.cache[require.resolve("./models/thing")]
 
-var Thing = LiveDocument.define("Thing")
-  .key("title", { length: [3,24] })
-  .key("description", { max: 140, required: true })
-  .key("unique", { unique: true })
+var liveDocumentMongo = new LiveDocumentMongo(new EventEmitter, db)
 
-
-Thing.socket = new EventEmitter
-
-   
 describe("LiveDocument", function() {
-  var liveDocumentMongo
   beforeEach(function(done) {
-    var socket = new EventEmitter
-    Thing.socket = socket
-    liveDocumentMongo = new LiveDocumentMongo(new EventEmitter, db)
-    liveDocumentMongo.setSocket(socket)
     db.collection("things").remove({}, function(err) {
       done()
     })
