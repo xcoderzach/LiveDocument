@@ -83,11 +83,12 @@ describe("LiveDocument", function() {
         post.assoc("comments").push({body: "Yo cool post bro"}, function(comment) {
           var postCopy = BlogPost.findOne(post.get("_id"), function() {
             post.assoc("comments").at(0).remove(function() {
+              ;(typeof post.assoc("comments").at(0)).should.equal("undefined")
               process.nextTick(function() {
                 ;(typeof postCopy.assoc("comments").at(0)).should.equal("undefined")
-                ;(typeof post.assoc("comments").at(0)).should.equal("undefined")
               })
               done()
+
             })
           })
         })
