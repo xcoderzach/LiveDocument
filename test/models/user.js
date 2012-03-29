@@ -6,8 +6,7 @@ var User = module.exports = LiveDocument.define("User")
 var Contacts = require("./contact")
 
 User
-  .key("name", { length: [3,24] })
+  .key("name", { length: [3, 24] })
   .key("job", { max: 140 })
-  .editableBy("self")
-  .one(Profile)
+  .one(Profile, { dependent: true })
   .many(Contacts)

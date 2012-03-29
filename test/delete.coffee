@@ -6,7 +6,6 @@ Mongolian             = require "mongolian"
 socket                = new EventEmitter
 Document              = require "../lib/document"
 Document.setSocket(socket)
-delete require.cache[require.resolve("./models/thing")]
 
 Thing                 = require "./models/thing"
 Thing.isServer        = false
@@ -39,7 +38,7 @@ describe "LiveDocument", ->
         things = Thing.find {}, ->
           things.length.should.equal 1
           things.at(0).remove()
-        things.on "remove", ->
+        things.once "remove", ->
           things.length.should.equal 0
           done()
     it "should fire a deleting event"
@@ -49,6 +48,7 @@ describe "LiveDocument", ->
       Thing.create {title: "herp", description: "derp"}, (thing) ->
         thing.remove ->
           thing.deleted.should.equal true
+          console.log(thing.get("_id") + "test")
           Thing.find { _id: thing.get("_id") }, (things) ->
             things.length.should.equal(0)
             done()
