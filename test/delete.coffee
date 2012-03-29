@@ -48,7 +48,6 @@ describe "LiveDocument", ->
       Thing.create {title: "herp", description: "derp"}, (thing) ->
         thing.remove ->
           thing.deleted.should.equal true
-          console.log(thing.get("_id") + "test")
           Thing.find { _id: thing.get("_id") }, (things) ->
             things.length.should.equal(0)
             done()
