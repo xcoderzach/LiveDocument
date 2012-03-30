@@ -1,31 +1,27 @@
 var EventEmitter      = require("events").EventEmitter
-  , LiveDocument      = require("../index")
-  , LiveDocumentMongo = require("../lib/drivers/mongodb/live_document_mongo")
+  , LiveDocumentMongo = require("../lib/server")
   , assert            = require("assert")
   , Mongolian         = require("mongolian")
-
+  , Document          = require("../lib/document")
+  , socket            = new EventEmitter
+Document.setSocket(socket) 
   , db = new Mongolian("localhost/LiveDocumentTestDB")
 
+delete require.cache[require.resolve("./models/thing")]
+var Thing = require("./models/thing")
+delete require.cache[require.resolve("./models/thing")]
 
-var Thing = LiveDocument.define("Thing")
-  .key("title", { length: [3,24] })
-  .key("description", { max: 140, required: true })
-  .key("unique", { unique: true })
-
-
-Thing.socket = new EventEmitter
 var liveDocumentMongo = new LiveDocumentMongo(new EventEmitter, db)
 
-   
 describe("LiveDocument", function() {
   beforeEach(function(done) {
-    var socket = new EventEmitter
-    Thing.socket = socket
-    liveDocumentMongo.setSocket(socket)
     db.collection("things").remove({}, function(err) {
       done()
     })
   }) 
+  afterEach(function() {
+    liveDocumentMongo.cleanup()
+  })
   describe("with an invalid title", function() {
     it("should not save", function(done) {
       var thing = Thing.create({title: "a", description: "herp derp"}, function() {

@@ -1,40 +1,35 @@
 { EventEmitter }      = require "events"
-LiveDocument          = require "../index"
-InstanceLayer         = require "../lib/drivers/mongodb/instance_layer"
+LiveDocumentMongo     = require "../lib/server"
 assert                = require "assert"
 Mongolian             = require "mongolian"
+socket                = new EventEmitter
+Document              = require "../lib/document"
+Document.setSocket(socket) 
+
+delete require.cache[require.resolve("./models/thing")]
+
+Thing                 = require "./models/thing"
+Thing.isServer = false
+
+delete require.cache[require.resolve("./models/thing")]
 
 db = new Mongolian("localhost/LiveDocumentTestDB")
-
-
-class Thing extends LiveDocument
-
-  @modelName = "Thing"
-  @socket = new EventEmitter
-
-  @key "title", { length: [3...24] }
-  @key "description", { max: 140 }
-
+liveDocumentMongo = new LiveDocumentMongo(socket, db, __dirname + "/models")
+ 
 describe "LiveDocument", ->
-  instanceLayer = null
   beforeEach (done) ->
-    # clean out all of the old listeners from previous tests 
-    socket = new EventEmitter
-    Thing.setSocket socket
-    instanceLayer = new InstanceLayer(socket, db, __dirname + "/models")
     db.collection("things").remove {}, (err) ->
       done()
   afterEach ->
-    instanceLayer.cleanup()
+    liveDocumentMongo.cleanup()
  
   describe "collections", ->
     describe ".at()", ->
       it "should return the item at index given", (done) ->
         Thing.create { title: "w000t" }, ->
           Thing.create { title: "w000t2" }, ->
-            things = Thing.read {}, ->
-              things.at(0).get("title").should.equal "w000t"
-              things.at(1).get("title").should.equal "w000t2"
+            things = Thing.find {}, ->
+              things.length.should.equal(2)
               done()
     describe ".get()", ->
       it "should return the item with given id", (done) ->
@@ -42,7 +37,7 @@ describe "LiveDocument", ->
           Thing.create { title: "w000t2" }, (thing2) ->
             id1 = thing1.get("_id")
             id2 = thing2.get("_id")
-            things = Thing.read {}, ->
+            things = Thing.find {}, ->
               things.get(id1).get("title").should.equal "w000t"
               things.get(id2).get("title").should.equal "w000t2"
               done()
@@ -52,7 +47,7 @@ describe "LiveDocument", ->
           Thing.create { title: "derp", priority: 10 }, ->
             Thing.create { title: "herp", priority: 100 }, ->
               Thing.create { title: "herp", priority: 50 }, ->
-                things = Thing.read({}).sortBy "priority"
+                things = Thing.find({}).sortBy "priority"
                 things.on "load", () ->
                   things.at(0).get("priority").should.equal 10
                   things.at(1).get("priority").should.equal 50
@@ -63,7 +58,7 @@ describe "LiveDocument", ->
           Thing.create { title: "derp", priority: 10 }, ->
             Thing.create { title: "herp", priority: 100 }, ->
               Thing.create { title: "herp", priority: 50 }, ->
-                things = Thing.read({}).sortBy "priority"
+                things = Thing.find({}).sortBy "priority"
                 things.on "load", () ->
                   Thing.create { title: "derp", priority: 25 }, ->
                     Thing.create { title: "herp", priority: 75 }, ->
@@ -78,7 +73,7 @@ describe "LiveDocument", ->
           Thing.create { title: "derp", priority: 10 }, ->
             Thing.create { title: "herp", priority: 100 }, ->
               Thing.create { title: "herp", priority: 50 }, ->
-                things = Thing.read({}).sortBy "priority"
+                things = Thing.find({}).sortBy "priority"
                 things.on "load", () ->
                   things.at(1).set {priority: 150}
                   things.at(0).get("priority").should.equal 10

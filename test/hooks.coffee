@@ -1,34 +1,32 @@
 { EventEmitter }      = require "events"
-LiveDocument          = require "../index"
-InstanceLayer         = require "../lib/drivers/mongodb/instance_layer"
+LiveDocument          = require "../lib/document"
+LiveDocumentMongo         = require "../lib/server"
 assert                = require "assert"
 Mongolian             = require "mongolian"
+socket                = new EventEmitter
+Document              = require "../lib/document"
+Document.setSocket(socket) 
 
 db = new Mongolian("localhost/LiveDocumentTestDB")
-
 
 getThing = () ->
   class Thing extends LiveDocument
     @modelName = "Thing"
-    @socket = new EventEmitter
-
+    @isServer = false
     @key "title", { length: [3...24] }
     @key "description", { max: 140 }
 
 Thing = getThing()
+liveDocumentMongo = new LiveDocumentMongo(socket, db, __dirname + "/models")
 describe "LiveDocument", ->
-  instanceLayer = null
   beforeEach (done) ->
     Thing = getThing()
     # clean out all of the old listeners from previous tests 
-    socket = new EventEmitter
-    Thing.setSocket socket
-    instanceLayer = new InstanceLayer(socket, db, __dirname + "/models")
     db.collection("things").remove {}, (err) ->
       done()
 
   afterEach ->
-   instanceLayer.cleanup()
+   liveDocumentMongo.cleanup()
  
   describe "beforeSave hook", () ->
     it "should be run before a model is saved and save if nothing is passed", (done) ->
@@ -40,6 +38,7 @@ describe "LiveDocument", ->
     it "the model should not save if the hook passes something and fire an error event", (done) ->
       Thing.beforeSave (thing, notOk) ->
           notOk("derp")
+      Thing.isServer = false
       thing = new Thing {title: "w00t"}
       thing.on "error", (err) ->
         err.should.equal("derp")

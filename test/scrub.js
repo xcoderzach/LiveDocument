@@ -1,4 +1,4 @@
-var LiveDocument = require("../index")
+var LiveDocument = require("../lib/document")
 
 var Thing = LiveDocument.define("Thing")
   .key("title", { length: [3,24] })

@@ -1,33 +1,25 @@
 var EventEmitter      = require("events").EventEmitter
-  , LiveDocument      = require("../index")
+  , LiveDocument      = require("../lib/document")
   , assert            = require("assert")
-  , InstanceLayer     = require("../lib/drivers/mongodb/instance_layer")
+  , LiveDocumentMongo = require("../lib/server")
   , Mongolian         = require("mongolian")
+  , db                = new Mongolian("localhost/LiveDocumentTestDB")
+  , socket            = new EventEmitter
+  , Document          = require("../lib/document")
 
-  , db = new Mongolian("localhost/LiveDocumentTestDB")
+Document.setSocket(socket)  
 
-
-var Thing = LiveDocument.define("Thing")
-  .key("title", { length: [3,24] })
-  .key("description", { max: 140 })
-
-
-Thing.socket = new EventEmitter
-   
+var Thing             = require("./models/thing")
+Thing.isServer = false
+var liveDocumentMongo = new LiveDocumentMongo(socket, db, __dirname + "/models")
 describe("LiveDocument", function() {
-  var instanceLayer
   beforeEach(function(done) {
-    var socket = new EventEmitter
-
-    Thing.socket = socket
-    instanceLayer = new InstanceLayer(socket, db, __dirname + "/models")
-
     db.collection("things").remove({}, function(err) {
       done()
     })
   }) 
   afterEach(function() {
-    instanceLayer.cleanup()
+    liveDocumentMongo.cleanup()
   })
 
   describe(".load method", function() {
@@ -39,6 +31,7 @@ describe("LiveDocument", function() {
         thing.load(function() {
           thing.get("title").should.equal("Herp Derp")
           thing.loaded.should.equal(true)
+
           done()
         })
       })

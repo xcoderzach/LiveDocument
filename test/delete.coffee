@@ -1,60 +1,46 @@
 { EventEmitter }      = require "events"
-LiveDocument          = require "../index"
-InstanceLayer         = require "../lib/drivers/mongodb/instance_layer"
-ChangeDispatch        = require "../lib/drivers/mongodb/change_dispatch"
+LiveDocument          = require "../lib/document"
+LiveDocumentMongo     = require "../lib/server"
 assert                = require "assert"
 Mongolian             = require "mongolian"
+socket                = new EventEmitter
+Document              = require "../lib/document"
+Document.setSocket(socket)
+
+Thing                 = require "./models/thing"
+Thing.isServer        = false
+
+delete require.cache[require.resolve("./models/thing")]
 
 db = new Mongolian("localhost/LiveDocumentTestDB")
 
-
-class Thing extends LiveDocument
-
-  @modelName = "Thing"
-  @socket = new EventEmitter
-
-  @key "title", { length: [3...24] }
-  @key "description", { max: 140 }
+liveDocumentMongo = new LiveDocumentMongo(socket, db, __dirname + "/models")
 
 describe "LiveDocument", ->
-  instanceLayer = null
   beforeEach (done) ->
-    # clean out all of the old listeners from previous tests 
-    socket = new EventEmitter
-    Thing.setSocket socket
-    ChangeDispatch.globalQueryListeners = []
-
-    instanceLayer = new InstanceLayer(socket, db, __dirname + "/models")
-    db.collection("things").remove {}, (err) ->
+    db.collection("things").remove (err) ->
       done()
   afterEach ->
-    instanceLayer.cleanup()
+    liveDocumentMongo.cleanup()
     
 
   describe ".delete()", ->
 
     it "should remove the item", (done) ->
       Thing.create {title: "herp", description: "derp"}, (thing) ->
-        Thing.delete {_id: thing.get("_id")}, ->
-          Thing.read {_id: thing.get("_id")}, (things) ->
+        thing.remove ->
+          Thing.find {_id: thing.get("_id")}, (things) ->
             things.length.should.equal 0
             done()
 
-    it "should send a delete notification to another instance of the same item", (done) ->
-      thing = Thing.create {title: "herp", description: "derp"}, ->
-        thing.on "delete", (thing) ->
-          thing.deleted.should.equal true
-          done()
-        Thing.delete {_id: thing.get("_id")}
-
     it "should send a remove notification to collections that contain that item", (done) ->
       Thing.create {title: "herp", description: "derp"}, (thing) ->
-        things = Thing.read {}, ->
+        things = Thing.find {}, ->
           things.length.should.equal 1
-        things.on "remove", ->
+          things.at(0).remove()
+        things.once "remove", ->
           things.length.should.equal 0
           done()
-        Thing.delete {_id: thing.get("_id")}
     it "should fire a deleting event"
 
   describe ".remove() instance", ->

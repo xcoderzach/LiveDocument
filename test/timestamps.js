@@ -1,18 +1,24 @@
 var EventEmitter      = require("events").EventEmitter
   , timer             = require("timers")
-  , LiveDocument      = require("../index")
-  , InstanceLayer     = require("../lib/drivers/mongodb/instance_layer")
+  , LiveDocument      = require("../lib/document")
+  , LiveDocumentMongo = require("../lib/server")
   , assert            = require("assert")
   , Mongolian         = require("mongolian")
+  , Document          = require("../lib/document")
+  , socket                = new EventEmitter
+Document.setSocket(socket)  
   , BlogPost          = require("./models/blog_post.js")
   , db = new Mongolian("localhost/LiveDocumentTestDB")
 
+delete require.cache[require.resolve("./models/blog_post")]
+BlogPost.isServer = false
+
 describe("LiveDocument", function() {
-  var instanceLayer
+  var liveDocumentMongo
   beforeEach(function(done) {
     var socket = new EventEmitter
 
-    instanceLayer = new InstanceLayer(socket, db, __dirname + "/models")
+    liveDocumentMongo = new LiveDocumentMongo(socket, db, __dirname + "/models")
 
     BlogPost.setSocket(socket)
 
@@ -37,16 +43,15 @@ describe("LiveDocument", function() {
     })
     it("should add updatedAt when the document is created", function(done) {
       var timeBeforeUpdate = (new Date).getTime()
-      process.nextTick(function() {
+      timer.setTimeout(function() {
         BlogPost.create({title: "A blog post"}, function(post) {
           post.set("title", "new title")
           post.save(function() {
             post.get("updatedAt").should.be.above(timeBeforeUpdate)
-            post.get("updatedAt").should.be.above(post.get("createdAt"))
-              done()
+            done()
           })
         })
-      })
+      }, 10)
     })
   })
 })

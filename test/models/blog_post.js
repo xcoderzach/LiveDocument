@@ -1,9 +1,7 @@
-var LiveDocument = require("../../index")
-  , EmbeddedLiveDocument = require("../../lib/embedded.js")
-
-var Comment = EmbeddedLiveDocument.define("Comment")
-  .key("body", { max: 124 })
+var LiveDocument = require("../../lib/document")
 
 var BlogPost = module.exports = LiveDocument.define("BlogPost")
+
+BlogPost 
   .key("title", { length: [3,24] })
-  .many(Comment)
+  .many(require("./comment"))

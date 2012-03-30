@@ -1,4 +1,4 @@
-QueryMatcher = require("../lib/drivers/mongodb/query_matcher")
+QueryMatcher = require("../lib/server/query_matcher")
 test = require("assert")
 
 describe "QueryMatcher", ->

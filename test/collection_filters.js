@@ -1,4 +1,5 @@
 var EventEmitter      = require("events").EventEmitter
+  , LiveDocument      = require("../lib/document")
   , LiveDocumentMongo = require("../lib/server")
   , assert            = require("assert")
   , Mongolian         = require("mongolian")
@@ -6,6 +7,9 @@ var EventEmitter      = require("events").EventEmitter
   , Document          = require("../lib/document")
   , socket            = new EventEmitter
 Document.setSocket(socket) 
+ 
+delete require.cache[require.resolve("./models/user")]
+delete require.cache[require.resolve("./models/profile")]
 
 var User              = require("./models/user")
   , Profile           = require("./models/profile")
@@ -17,6 +21,7 @@ Profile.isServer = false
 delete require.cache[require.resolve("./models/user")]
 delete require.cache[require.resolve("./models/profile")]
 
+//setup the hasOne association
 
 describe("LiveDocument", function() {
   beforeEach(function(done) {
@@ -29,29 +34,20 @@ describe("LiveDocument", function() {
   afterEach(function() {
     liveDocumentMongo.cleanup()
   })
-  describe("one associated document", function() { 
-    it("should be created if it doesn't exist", function(done) {
-      var user = User.create({"name": "Zach Smith"}, function() {
-        user.assoc("profile", function(profile) {
-          profile.save(function() {
-            Profile.findByKey("userId", user.get("_id"), function(prof) {
-              prof.get("_id").should.equal(profile.get("_id"))
-              done()
-            })
-          })
-        })
-      })
-    })
-    it("should be found if it does exist", function(done) {
-      var user = User.create({"name": "Zach Smith"}, function() {
-        Profile.create({ userId: user.get("_id"), realName: "asdfasdfs" }, function() {
-          User.findOne(user.get("_id"), function(profile) {
-            var profile = user.assoc("profile", function() {
-              var prof = Profile.findByKey("userId", user.get("_id"), function() {
-                profile.get("_id").should.equal(prof.get("_id"))
-                prof.get("realName").should.equal(profile.get("realName"))
-                done()
+  describe("when I filter a collection", function() {
+    it("should remove things that don't pass the filter", function(done) {
+      Profile.create({ first: "Zach", last: "Smith" }, function(profile) {
+        Profile.create({ first: "Mach", last: "Sith" }, function(profile) {
+          Profile.create({ first: "Jack", last: "Smit" }, function(profile) {
+            Profile.find({}, function(profiles) {
+              profiles.filter(function(profile) {
+                var first = profile.get("first")
+                return first.charAt(first.length - 1) === "h"
               })
+              profiles.length.should.equal(2)
+              profiles.at(0).get("first").should.equal("Zach")
+              profiles.at(1).get("first").should.equal("Mach")
+              done()
             })
           })
         })

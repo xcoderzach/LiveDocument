@@ -1,31 +1,30 @@
 { EventEmitter }      = require "events"
-LiveDocument          = require "../index"
-InstanceLayer         = require "../lib/drivers/mongodb/instance_layer"
+LiveDocument          = require "../lib/document"
+LiveDocumentMongo     = require "../lib/server"
 assert                = require "assert"
 Mongolian             = require "mongolian"
+socket                = new EventEmitter
+Document              = require "../lib/document"
+Document.setSocket(socket) 
+
+delete require.cache[require.resolve("./models/thing")]
+
+Thing                 = require("./models/thing")
+Thing.isServer = false
+
+delete require.cache[require.resolve("./models/thing")]
 
 db = new Mongolian("localhost/LiveDocumentTestDB")
 
-
-class Thing extends LiveDocument
-  @modelName = "Thing"
-
-  @socket = new EventEmitter
-
-  @key "title", { length: [3...24] }
-  @key "description", { max: 140 }
+liveDocumentMongo = new LiveDocumentMongo(socket, db, __dirname + "/models")
 
 describe "LiveDocument", ->
-  instanceLayer = null
   beforeEach (done) ->
     # clean out all of the old listeners from previous tests 
-    socket = new EventEmitter
-    Thing.setSocket socket
-    instanceLayer = new InstanceLayer(socket, db, __dirname + "/models")
     db.collection("things").remove {}, (err) ->
       done()
   afterEach ->
-    instanceLayer.cleanup()
+    liveDocumentMongo.cleanup()
  
 
   describe ".create()", ->
@@ -33,6 +32,7 @@ describe "LiveDocument", ->
       it "should send a create message", (done) ->
         document = { title: "w00t", description: "w00t w00t" }
         Thing.create document, (doc) ->
+          console.log("calllback called")
           doc.get("title").should.eql document.title
           doc.get("description").should.eql document.description
           done()
@@ -43,7 +43,7 @@ describe "LiveDocument", ->
         (typeof thing.get("_id")).should.equal "string"
 
       it "should send an insert message to a collection to which it fits", (done) ->
-        things = Thing.read {priority: {$lt: 10}}
+        things = Thing.find {priority: {$lt: 10}}
         things.length.should.equal 0
         things.on "insert", ->
           things.length.should.equal 1
@@ -51,7 +51,7 @@ describe "LiveDocument", ->
         Thing.create { title: "herp derp", priority: 5 }
 
       it "should not send an insert message to a collection to which it doesn't fits", (done) ->
-        things = Thing.read {priority: {$lt: 10}}
+        things = Thing.find {priority: {$lt: 10}}
         things.length.should.equal 0
   
         things.on "insert", ->

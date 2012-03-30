@@ -1,20 +1,17 @@
 var EventEmitter      = require("events").EventEmitter
-  , LiveDocument      = require("../index")
-  , InstanceLayer     = require("../lib/drivers/mongodb/instance_layer")
   , assert            = require("assert")
   , Mongolian         = require("mongolian")
+  , db                = new Mongolian("localhost/LiveDocumentTestDB")
+  , socket            = new EventEmitter
+  , Document          = require("../lib/document")
+Document.setSocket(socket)
+var LiveDocumentMongo = require("../lib/server")
+  , liveDocumentMongo = new LiveDocumentMongo(socket, db, __dirname + "/models")
   , BlogPost          = require("./models/blog_post.js")
-  , db = new Mongolian("localhost/LiveDocumentTestDB")
+BlogPost.isServer     = false
 
 describe("LiveDocument", function() {
-  var instanceLayer
   beforeEach(function(done) {
-    var socket = new EventEmitter
-
-    instanceLayer = new InstanceLayer(socket, db, __dirname + "/models")
-
-    BlogPost.setSocket(socket)
-
     db.collection("blogPosts").remove({}, function(err) {
       try {
         done()
@@ -24,8 +21,7 @@ describe("LiveDocument", function() {
     })
   })         
   afterEach(function() {
-    instanceLayer.cleanup()
-    instanceLayer = null
+    liveDocumentMongo.cleanup()
   }) 
   describe("client ids", function() {
     it("should give a unique clientId to each document", function(done) {
@@ -41,7 +37,7 @@ describe("LiveDocument", function() {
   })
   describe(".keys() method", function() {
     it("should return a list of the keys for the document", function() {
-      BlogPost.create({title: "herpderp"}).keys().should.eql(["title", "_id"])
+      BlogPost.create({title: "herpderp"}).keys().should.eql(["title", "_id", "createdAt", "updatedAt"])
     })
   })
 })
