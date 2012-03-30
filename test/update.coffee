@@ -56,5 +56,3 @@ describe "LiveDocument", ->
             done()
           else 
             oneDone = true
-          
-          done
