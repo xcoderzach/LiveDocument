@@ -38,6 +38,7 @@ describe("LiveDocument", function() {
           thing.save()
         })
         small.on("insert", function() {
+          big.length.should.equal(0)
           small.length.should.equal(1)
           done()
         })
