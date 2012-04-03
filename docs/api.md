@@ -7,7 +7,7 @@ keys on your documents, as well as validations and associations.
 
 ###key 
 
-#####Document.key(name, [properties])
+####Document.key(name, [properties])
 
   To add properties to your document, use the `key` method.  The `name` is a
 `String` which describes a property that will exist in instances of this
@@ -32,7 +32,7 @@ how to make your own custom validations, see the
 
 ###timestamps
 
-#####Document.timestamps()
+####Document.timestamps()
 
   The `timestamps` method will give your document createdAt and updatedAt
 timestamps.  The timestamps will be created and updated automatically.
@@ -49,7 +49,7 @@ module.exports = Document("Post")
 
 ###getKey
 
-#####Document.getKey(name, watchFields, valueFn)
+####Document.getKey(name, watchFields, valueFn)
   
   The `getKey` method defines a dynamic key, whose value is determined by the
 return value of valueFn.
@@ -61,7 +61,7 @@ watchFields changes.
 
 ###setKey
 
-#####Document.setKey(name, fn) 
+####Document.setKey(name, fn) 
 
   The setKey method allows you to define behavior when a key is set.
 
@@ -108,64 +108,64 @@ module.exports = Document("Post")
  
 ###beforeSave
 
-#####Document.beforeSave(fn) 
+####Document.beforeSave(fn) 
 
   This is called before updating or creating a document.  It is
 called on the client and the server.
 
 ###serverBeforeSave
 
-#####Document.serverBeforeSave(fn)  
+####Document.serverBeforeSave(fn)  
 
   This is called before updating or creating a document.  It is
 called on the server.
 
 ###clientBeforeSave
 
-#####Document.clientBeforeSave(fn)  
+####Document.clientBeforeSave(fn)  
 
   This is called before updating or creating a document.  It is
 called on the client.
 
 ###beforeCreate
 
-#####Document.beforeCreate(fn) 
+####Document.beforeCreate(fn) 
 
   This is called before creating a document on the both client and the server.
 
 ###serverBeforeCreate
 
-#####Document.serverBeforeCreate(fn)   
+####Document.serverBeforeCreate(fn)   
 
   This is called before creating a document on the the server.
 
 ###clientBeforeCreate
 
-#####Document.clientBeforeCreate(fn)   
+####Document.clientBeforeCreate(fn)   
 
   This is called before creating a document on the the client.
 
 ###afterSave
 
-#####Document.afterSave(fn) 
+####Document.afterSave(fn) 
 
   This is called after creating or updating a document on the both client and the server.
 
 ###serverAfterSave
 
-#####Document.serverAfterSave(fn)   
+####Document.serverAfterSave(fn)   
 
   This is called after creating or updating a document on the server.
  
 ###afterRemove
 
-#####Document.afterRemove(fn) 
+####Document.afterRemove(fn) 
 
   This is called after removing a document on the client or server.
 
 ###serverAfterRemove
 
-#####Document.serverAfterRemove(fn)   
+####Document.serverAfterRemove(fn)   
 
   This is called after removing a document on the server.
 
@@ -198,7 +198,7 @@ Post
 
 ###many
 
-#####Document.many(associatedModel[, opts])
+####Document.many(associatedModel[, opts])
 
   A `many` association describes a one-to-many association between
 documents.
@@ -228,7 +228,7 @@ queried with.
 
 ###one
 
-#####Document.one(associatedModel[, opts])
+####Document.one(associatedModel[, opts])
 
   A `one` association describes a one-to-one association between two
 documents.
@@ -255,24 +255,290 @@ profile as `bio`, you would pass `{ as: "bio" }`.
  
 ###belongsTo
 
-#####Document.belongsTo(associatedModel[, opts])
+####Document.belongsTo(associatedModel[, opts])
+
+  A `belongsTo` association describes a one-to-one or one-to-many association
+where the document belongs to (has the foriegn key of) another document.  For
+example, `comments` belong to a `blogPost`, a `profile` belongs to a `user`.
+
+  It specifies the reverse association of `one` and `many`.
+ 
+```javascript
+var Post = require("./post")
+module.exports = Document("Comment")
+  .belongsTo(Post)
+```
 
 Document Helper Methods
 -----------------------
 
 ###find
 
-#####Document.find(query[, callback]) 
+####Document.find(query[, callback]) 
 
+  The `find` method takes in a query and returns a `Collection`.
+A query is simply a mongodb query object.
+
+See [this page](http://www.mongodb.org/display/DOCS/Advanced+Queries) for more on queries.
+ 
+
+  Here is an example that will find all posts with 100 or more votes.
+```javascript
+//post.js
+module.exports = Document("Post")
+  .key("votes")
+
+var post = Post.find({votes: { $gt: 100 })
+```
+ 
 ###findOne
 
-#####Document.findOne(id[, callback])  
+####Document.findOne(id[, callback])  
+
+  Find one takes in an _id, and finds a document with that id.  The document is
+returned immediatly, however none of it's properties are actually set.  However
+you can, and should, pass it to the view immediatly.  The document will fire
+[events](/document-events) as it's state changes (i.e. when it loads, or
+
+  If you do for some reason need to wait for the post to load first, you can
+
+pass in a callback as the second argument to findOne, or pass a callback to the
+`.load` method on the returned instance.  
+
+```javascript
+//post.js
+module.exports = Document("Post")
+
+//myCode.js
+var Post = require("./post")
+
+var post = Post.findOne("4f7580a64e822029b7000001") 
+```
 
 ###findByKey
 
-#####Document.findOne(key, value[, callback])   
+####Document.findByKey(key, value[, callback])   
+
+Finds the document `key` equals `value`, there should
+only be one document where `key` equals `value`. i.e. value
+should be unique.
+
+```javascript
+//user.js
+module.exports = Document("User")
+  .key("email")
+
+var user = User.findByKey("email", "x.coder.zach[At]gmail.com") 
+``` 
+
+This example finds a user by email address.
 
 ###create
 
-#####Document.create(document[, callback])
+####Document.create(document[, callback])
+
+This is simply a utility method for the following:
+
+```javascript
+module.exports = Document("User")
+  .key("name")
+  .key("email")
+
+var user = User.create({ name: "Zach", email: "x.coder.zach[At]gmail.com" })
+
+//this is equivelent to 
+
+var user = new User({ name: "Zach", email: "x.coder.zach[At]gmail.com" })
+user.save()
+```
+
+Document Instance Methods
+-----------------------
  
+  Now that you've found or created document, and now you want to do things with it.
+
+  You can Define your own instance methods like so:
+```javascript
+  //Every type of document will get this method
+  Document.prototype.myMethod = function() {
+
+  }
+
+  //Just Posts will get this method
+  Post.prototype.myMethod = function() {
+
+  }
+```
+###constructor
+####Document(jsonDocument[, options])
+
+###set
+####Document.prototype.set(properies[, options])
+####Document.prototype.set(key, value[, options])
+
+
+###get
+####Document.prototype.get(key)
+
+###assoc
+####Document.prototype.get(name[, callback])
+
+###keys
+####Document.prototype.keys()
+
+  Returns a list of the keys this document has.
+
+###save
+####Document.prototype.save([callback])
+
+###remove
+####Document.prototype.remove([callback])
+
+###manyAssocs
+####Document.prototype.manyAssocs()
+
+  Returns a list of the many associations this document has.
+
+```javascript
+module.exports = Document("Post")
+  .many("comments")
+
+
+var post = new Post()
+post.manyAssocs() // ["comments"]
+``` 
+
+###oneAssocs
+####Document.prototype.oneAssocs()
+
+  This is the names of one assocs, as well as belongsTo assocs, since they both
+point to one document.
+
+```javascript
+module.exports = Document("Post")
+  .one("thing")
+  .belongsTo("author")
+
+
+var post = new Post()
+post.oneAssocs() // ["thing", "author"]
+``` 
+
+###assocs
+####Document.prototype.assocs()
+  Returns a list of the names of all associations for this document.
+
+```javascript
+module.exports = Document("Post")
+  .many("comments")
+  .belongsTo("author")
+
+
+var post = new Post()
+post.assocs() // ["comments", "author"]
+
+```
+
+###validate
+####Document.prototype.validate([callback, opts])
+
+  Forces the document to validate.  This method is called automatically
+everytime a value is changed with .set().  This will emit `valid` or
+`invalid` events.
+
+```javascript
+var post = new Post()
+post.on("invalid", function() {
+
+})
+post.validate(function(post, invalidFields) {
+                         
+})
+
+
+ 
+```
+
+
+
+###validateField
+####Document.prototype.validateField(field[, callback, opts])
+
+  
+
+###isUnique
+####Document.prototype.isUnique(field, value, callback)
+
+  Calls callback with `true` as the first argument if the field is
+unique, otherwise it calls it with `false`
+
+```javascript
+  Post.isUnique("email", "x.coder.zach{At}gmail.com", function(isUnique) {
+    isUnique //true if is unique, false otherwise.            
+  })
+```
+
+Document Instance Events
+------------------------
+
+  There are a lot of events a document can emit as it's state changes.
+Here's a list of all of them in one place, so you don't have to hunt around.
+
+  The first argument for all event callbacks is the instance itself, all event
+  handlers are bound to the instance.
+
+### "saving"
+ 
+  Emitted when the document starts saving.
+  
+### "saved"
+
+  Emitted when the document finishes saving.
+
+### "load"
+
+  Emitted once the document has loaded.
+
+### "change"
+
+  Emitted when a field on the document changes.
+  The second parameter is a list of fields that changed.
+
+### "change:field"
+
+  Emitted when field, `field`, on the document changes.
+  The second parameter is the new value of the field,
+  the third parameter is the old value.
+
+### "delete"
+
+  Emitted when the document is deleted.
+
+### "notExist"
+
+  Emitted when the document in the database that this document refers to
+doesn't actually exist.
+
+### "invalid"
+
+  Emitted when a document becomes invalid, this happens as soon as set is
+called with invalid data, in order to do responsive real-time error reporting.
+
+### "invalid:field"
+
+  Emitted when a field, `field` in the document becomes invalid, this happens
+  as soon as set is called with invalid data, in order to do responsive
+  real-time error reporting.
+
+### "valid"
+  
+  Emitted when new data is validated and is in fact valid.
+
+### "valid:field"
+
+  Emitted when a particular field is validated and is in fact valid.
+
+### "error"
+ 
+  Emitted when there is an error with the document, right now this only
+happens when an error is passed into the done method of after save.
