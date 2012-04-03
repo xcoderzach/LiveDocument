@@ -455,16 +455,10 @@ post.validate(function(post, invalidFields) {
                          
 })
 
-
- 
 ```
-
-
 
 ###validateField
 ####Document.prototype.validateField(field[, callback, opts])
-
-  
 
 ###isUnique
 ####Document.prototype.isUnique(field, value, callback)
