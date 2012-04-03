@@ -62,12 +62,13 @@ describe "LiveDocument", ->
                 things.on "load", () ->
                   Thing.create { title: "derp", priority: 25 }, ->
                     Thing.create { title: "herp", priority: 75 }, ->
-                      things.at(0).get("priority").should.equal 10
-                      things.at(1).get("priority").should.equal 25
-                      things.at(2).get("priority").should.equal 50
-                      things.at(3).get("priority").should.equal 75
-                      things.at(4).get("priority").should.equal 100
-                      done()
+                      process.nextTick ->
+                        things.at(0).get("priority").should.equal 10
+                        things.at(1).get("priority").should.equal 25
+                        things.at(2).get("priority").should.equal 50
+                        things.at(3).get("priority").should.equal 75
+                        things.at(4).get("priority").should.equal 100
+                        done()
            
         it "should move updated elements into correct position", (done) ->
           Thing.create { title: "derp", priority: 10 }, ->
