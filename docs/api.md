@@ -1,3 +1,6 @@
+LiveDocument API
+================
+
 Document Definition Methods
 ---------------------------
 
