@@ -37,7 +37,7 @@ how to make your own custom validations, see the
 
 ####Document.timestamps()
 
-  The `timestamps` method will give your document createdAt and updatedAt
+  The `timestamps` method will give your document `createdAt` and `updatedAt`
 timestamps.  The timestamps will be created and updated automatically.
 The format of a timestamp is a unix timestamp, specifically the result
 of calling `(new Date).getTime()`
@@ -54,13 +54,18 @@ module.exports = Document("Post")
 
 ####Document.getKey(name, watchFields, valueFn)
   
-  The `getKey` method defines a dynamic key, whose value is determined by the
+  The `getKey` method defines a dynamic key whose value is determined by the
 return value of valueFn.
 
   A change event "change:name" will be called when any of the fields listed in
 watchFields changes.
 
-`valueFn`
+```javascript
+User = Document("User")
+  .getKey("fullName", ["first", "last"], function () {
+    return this.get("first") + " " + this.get("last")
+  })
+```
 
 ###setKey
 
@@ -85,14 +90,14 @@ module.exports = Document("Post")
 Document Hook Methods
 ---------------------
 
-  These methods registers a handler to be called before or after
+  These methods register a handler to be called before or after
 some action is performed on a document.
 
 In each of these methods, `fn` takes two arguments:
 
   * `instance` - The instance of the document
 
-  * `done` - A function to call when your handler is finished.  If anything is
+  * `done` - A function to be called when your handler is finished.  If anything is
 passed to done in a before filter, the document will not save and whatever was
 passed to done will be emitted as the first argument to the `"error"` event.
 
@@ -172,14 +177,14 @@ called on the client.
 
   This is called after removing a document on the server.
 
-Associations
-------------
+Document Association Methods
+----------------------------
 
   Associations provide a way to model relationships between your documents.
 For example, `blogPosts` might have many `comments` and a `blogPost` might
 belongTo an `author` or an `author` might have one `profile`.
 
-  NOTE: A quick note about cyclic dependencies.  If two documents have each
+  **NOTE**: A quick note about cyclic dependencies.  If two documents have each
 other as associations, i.e. one belongs to another, then we need to do
 the following:
 
@@ -298,7 +303,7 @@ var post = Post.find({votes: { $gt: 100 })
 
 ####Document.findOne(id[, callback])  
 
-  Find one takes in an _id, and finds a document with that id.  The document is
+  `findOne` takes in an `_id`, and finds a document with that id.  The document is
 returned immediatly, however none of it's properties are actually set.  However
 you can, and should, pass it to the view immediatly.  The document will fire
 [events](/document-events) as it's state changes (i.e. when it loads, or
@@ -322,8 +327,8 @@ var post = Post.findOne("4f7580a64e822029b7000001")
 
 ####Document.findByKey(key, value[, callback])   
 
-Finds the document `key` equals `value`, there should
-only be one document where `key` equals `value`. i.e. value
+Finds the document in which `key` equals `value`, there should
+only be one document where `key` equals `value`. i.e. `value`
 should be unique.
 
 ```javascript
@@ -357,50 +362,54 @@ user.save()
 
 Document Instance Methods
 -----------------------
- 
-  Now that you've found or created document, and now you want to do things with it.
 
-  You can Define your own instance methods like so:
-```javascript
-  //Every type of document will get this method
-  Document.prototype.myMethod = function() {
-
-  }
-
-  //Just Posts will get this method
-  Post.prototype.myMethod = function() {
-
-  }
-```
 ###constructor
-####Document(jsonDocument[, options])
+
+####Document(JSONDocument[, options])
+
+Constructs a new document instance.
+
+Options:
+  * validate - defaults to `true`. Specifies whether to value the contents of the JSONDocument.
+  * noId - defaults to `false`. If `noId` is `true`, constructor does not generate an id.
 
 ###set
+
 ####Document.prototype.set(properies[, options])
+
 ####Document.prototype.set(key, value[, options])
 
+Sets the value of `key` to `value`. If the first parameter is an object, sets the value of each `key` in the document to its `value`.
 
 ###get
 ####Document.prototype.get(key)
 
+Gets the value of the `key`.
+
 ###assoc
-####Document.prototype.get(name[, callback])
+####Document.prototype.assoc(name[, callback])
+
+Returns associated document or collection. `callback` is called once association is loaded.
 
 ###keys
 ####Document.prototype.keys()
 
-  Returns a list of the keys this document has.
+Returns a list of the keys this document has.
 
 ###save
 ####Document.prototype.save([callback])
 
+If the document does not exist, creates the document. If the document already exists, saves the document.
+
 ###remove
 ####Document.prototype.remove([callback])
+
+Removes the document from the DB. Callback is called once document has been removed successfully.
 
 ###manyAssocs
 ####Document.prototype.manyAssocs()
 
-  Returns a list of the many associations this document has.
+Returns a list of the many associations this document has.
 
 ```javascript
 module.exports = Document("Post")
@@ -414,7 +423,7 @@ post.manyAssocs() // ["comments"]
 ###oneAssocs
 ####Document.prototype.oneAssocs()
 
-  This is the names of one assocs, as well as belongsTo assocs, since they both
+This is the names of one assocs, as well as belongsTo assocs, since they both
 point to one document.
 
 ```javascript
@@ -445,7 +454,7 @@ post.assocs() // ["comments", "author"]
 ###validate
 ####Document.prototype.validate([callback, opts])
 
-  Forces the document to validate.  This method is called automatically
+Forces the document to validate.  This method is called automatically
 everytime a value is changed with .set().  This will emit `valid` or
 `invalid` events.
 
@@ -463,16 +472,34 @@ post.validate(function(post, invalidFields) {
 ###validateField
 ####Document.prototype.validateField(field[, callback, opts])
 
+Validates the contents of a specified `field`. `callback` is called when finished. If the field is invalid, the second parameter to `callback` will be a list of failed validations.
+
+Options:
+  * silent - If true, doesn't emit an event.
+
 ###isUnique
 ####Document.prototype.isUnique(field, value, callback)
 
-  Calls callback with `true` as the first argument if the field is
+Calls callback with `true` as the first argument if the field is
 unique, otherwise it calls it with `false`
 
 ```javascript
   Post.isUnique("email", "x.coder.zach{At}gmail.com", function(isUnique) {
     isUnique //true if is unique, false otherwise.            
   })
+```
+
+  You can Define your own instance methods like so:
+```javascript
+  //Every type of document will get this method
+  Document.prototype.myMethod = function() {
+
+  }
+
+  //Just Posts will get this method
+  Post.prototype.myMethod = function() {
+
+  }
 ```
 
 Document Instance Events
