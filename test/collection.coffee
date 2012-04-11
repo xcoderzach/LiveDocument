@@ -44,11 +44,11 @@ describe "LiveDocument", ->
     describe ".sortBy()", ->
       describe "when given a field name", ->
         it "should put the elements in sorted order", (done) ->
+          things = Thing.find({}).sortBy "priority"
           Thing.create { title: "derp", priority: 10 }, ->
             Thing.create { title: "herp", priority: 100 }, ->
               Thing.create { title: "herp", priority: 50 }, ->
-                things = Thing.find({}).sortBy "priority"
-                things.on "load", () ->
+                things.load () ->
                   things.at(0).get("priority").should.equal 10
                   things.at(1).get("priority").should.equal 50
                   things.at(2).get("priority").should.equal 100
