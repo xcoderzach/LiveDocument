@@ -1,4 +1,4 @@
-Associations
+LiveDocument Associations
 ============
 
   LiveDocument supports three types of associations

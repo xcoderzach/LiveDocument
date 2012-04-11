@@ -5,29 +5,25 @@ LiveDocument
 client and server components work seamlessly together to allow you to build
 your app without having to write all of your model code twice.
 
-Install
-=======
+##Install
 
 ```zsh
 npm install LiveDocument
 ```
 
-Requirements
-============
+##Requirements
 
   * Connect (or express)
   * AssetPipeline
   * Socket.io
 
-Getting Started
-===============
+##Getting Started
 
 LiveDocument is still in alpha and hasn't been optimized for use
 by itself, it requires the asset provider to serve it's assets
 as well as the require function for module support.
 
-Setting up the Server
-=====================
+##Setting up the Server
 
   Here are the basics, without the asset Provider stuff
   On the server:
@@ -51,8 +47,7 @@ io.listen(app)
 DocumentServer.socket(io)
 ```
 
-Defining your Models
-====================
+##Defining your Models
 
   Define a model:
 ```javascript
@@ -79,11 +74,10 @@ class BlogPost extends Document
 [validations](./validations.html) for those properties.  You can also
 describe any [associations](./associations.html) here too.
 
-The Basics
-==========
+##The Basics
 
-Creating Things
-===============
+###Creating Things
+
 
 ```javascript
 //path should be relative to your current file
@@ -110,8 +104,7 @@ they happen. [Read more about how ids work here](./about_ids)
 Furthur reading:
 [Great article by Alex MacCaw about async UIs](http://alexmaccaw.com/posts/async_ui)
 
-Finding Things
-==============
+###Finding Things
 
 ```javascript
 //path should be relative to your current file
@@ -153,8 +146,7 @@ Further Reading
 [Collection Events](./collections.html#events)
 [Collection Methods](./collections.html#methods)
 
-Finding One Thing
-=================
+###Finding One Thing
 
 ```javascript
 var BlogPost = require("./app/models/blog_post")
@@ -171,8 +163,7 @@ Further reading:
 [Document Events](./documents.html#events)
 [Document Methods](./documents.html#methods)
 
-Updating Things
-===============
+###Updating Things
 
 ```javascript
 var BlogPost = require("./app/models/blog_post")
@@ -186,8 +177,7 @@ post.save()
 the save method persists the changes to the database.  The "saving" event is
 fired when the document starts saving and "saved" is fired when it is complete.
 
-Deleting Things
-===============
+###Deleting Things
 
 ```javascript
 var BlogPost = require("./app/models/blog_post")
@@ -199,8 +189,7 @@ post.destroy()
   Thats all it takes to delete something.  It fires the "destroying" event
 when it starts deleting and the "destroyed" event when it completes.  
 
-Real-Time
-=========
+##Real-Time
 
   Enough with the boring object document mapping stuff lets make our app 
 real-time.
@@ -210,8 +199,7 @@ real-time.
 in two different browsers on the same computer, or on two seperate computers.
 It doesn't really matter.  
 
-Real-Time Collections
-=====================
+###Real-Time Collections
 
 ```javascript
 //client 1 finds all of the blog posts
@@ -251,8 +239,7 @@ will log the following:
 
 since post2 no longer fits the criterion client 1 is interested in
 
-Real-Time Documents
-===================
+###Real-Time Documents
 
   Lets assume we have a blog post in the database with the title "A Title"
 ```javascript
