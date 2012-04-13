@@ -566,3 +566,57 @@ called with invalid data, in order to do responsive real-time error reporting.
  
   Emitted when there is an error with the document, right now this only
 happens when an error is passed into the done method of after save.
+
+Collection Methods
+------------------
+
+  A collection is a list of documents, usually returned by the find()
+method.
+
+  This example returns a collection of all tasks in the database.
+```
+var tasks = Task.find()
+```
+
+###at
+####Collection.prototype.at(index)
+
+  Returns the Document at index `index`.
+
+```javascript
+var firstTask = tasks.at(0)
+```
+
+###length
+####collection.length
+
+  This isn't a method, but collections have a length property, the length of the collection
+
+###get
+####Collection.prototype.get(id)
+
+  This returns the document with _id equal to id.
+
+###sortBy
+####Collection.prototype.sortBy(field[, reverse])
+
+  Sorts collection by `field`. If reverse is true, then it's in reverse order.
+Reverse order is descending. Normal order is ascending.
+
+###filter
+####Collection.prototype.filter(fn)
+
+  Filters the collection by fn, if fn returns true, the document is added to
+the collection.
+
+```javascript
+collection.filter(function(document) {
+  return document.get("votes") > 100
+})
+```
+
+###load
+####Collection.prototype.load(fn)
+
+  Called once the collection is loaded, unless it already is, then it's called
+immediately.
