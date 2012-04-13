@@ -17,7 +17,7 @@ keys on your documents, as well as validations and associations.
 `Document`.
 
 ```javascript
-module.exports = Document("Post")
+module.exports = Document.define("Post")
   .key("title")
   .key("body", {required: false})
 ```
@@ -45,7 +45,7 @@ of calling `(new Date).getTime()`
 To access the timestamps you can call [get("createdAt") or get("updatedAt")](/api.html#get)
 
 ```javascript
-module.exports = Document("Post")
+module.exports = Document.define("Post")
   //define the rest of your keys
   .timestamps()
 ``` 
@@ -61,7 +61,7 @@ return value of valueFn.
 watchFields changes.
 
 ```javascript
-User = Document("User")
+User = Document.define("User")
   .getKey("fullName", ["first", "last"], function () {
     return this.get("first") + " " + this.get("last")
   })
@@ -78,7 +78,7 @@ a user calls the `.set` method.
 
 
 ```javascript
-module.exports = Document("Post")
+module.exports = Document.define("Post")
   //define the rest of your keys
   .setKey("name", function(name) {
     name = name.split(" ")      
@@ -102,7 +102,7 @@ passed to done in a before filter, the document will not save and whatever was
 passed to done will be emitted as the first argument to the `"error"` event.
 
 ```javascript
-module.exports = Document("Post")
+module.exports = Document.define("Post")
   .beforeSave(function(post, done) {
     post.isUnique("title", function(isUnique) {
       if(!isUnique) {
@@ -191,13 +191,13 @@ the following:
 ```javascript
 
 //comment.js
-var Comment = Document("Comment")
+var Comment = Document.define("Comment")
   , Post = require("./post")
 
 Comment
   .belongsTo(Post)
 
-var Post = Document("Post")
+var Post = Document.define("Post")
   , Comment = require("./comment")
 
 Post
@@ -216,7 +216,7 @@ documents.
 ```javascript
 var Comment = require("./comment")
 
-module.exports = Document("Post")
+module.exports = Document.define("Post")
   .many(Comment)
 ```
 
@@ -246,7 +246,7 @@ documents.
 ```javascript
 var Profile = require("./profile")
 
-module.exports = Document("User")
+module.exports = Document.define("User")
   .one(Profile)
 ```
 
@@ -273,7 +273,7 @@ example, `comments` belong to a `blogPost`, a `profile` belongs to a `user`.
  
 ```javascript
 var Post = require("./post")
-module.exports = Document("Comment")
+module.exports = Document.define("Comment")
   .belongsTo(Post)
 ```
 
@@ -293,7 +293,7 @@ See [this page](http://www.mongodb.org/display/DOCS/Advanced+Queries) for more o
   Here is an example that will find all posts with 100 or more votes.
 ```javascript
 //post.js
-module.exports = Document("Post")
+module.exports = Document.define("Post")
   .key("votes")
 
 var post = Post.find({votes: { $gt: 100 })
@@ -315,7 +315,7 @@ pass in a callback as the second argument to findOne, or pass a callback to the
 
 ```javascript
 //post.js
-module.exports = Document("Post")
+module.exports = Document.define("Post")
 
 //myCode.js
 var Post = require("./post")
@@ -333,7 +333,7 @@ should be unique.
 
 ```javascript
 //user.js
-module.exports = Document("User")
+module.exports = Document.define("User")
   .key("email")
 
 var user = User.findByKey("email", "x.coder.zach[At]gmail.com") 
@@ -348,7 +348,7 @@ This example finds a user by email address.
 This is simply a utility method for the following:
 
 ```javascript
-module.exports = Document("User")
+module.exports = Document.define("User")
   .key("name")
   .key("email")
 
@@ -412,7 +412,7 @@ Removes the document from the DB. Callback is called once document has been remo
 Returns a list of the many associations this document has.
 
 ```javascript
-module.exports = Document("Post")
+module.exports = Document.define("Post")
   .many("comments")
 
 
@@ -427,7 +427,7 @@ This is the names of one assocs, as well as belongsTo assocs, since they both
 point to one document.
 
 ```javascript
-module.exports = Document("Post")
+module.exports = Document.define("Post")
   .one("thing")
   .belongsTo("author")
 
@@ -441,7 +441,7 @@ post.oneAssocs() // ["thing", "author"]
   Returns a list of the names of all associations for this document.
 
 ```javascript
-module.exports = Document("Post")
+module.exports = Document.define("Post")
   .many("comments")
   .belongsTo("author")
 
