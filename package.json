@@ -1,6 +1,6 @@
 { "name": "LiveDocument"
 , "description": "A Realtime Isomorphic ODM for MongoDB"
-, "version": "0.0.0"
+, "version": "0.0.1"
 , "author": "Zach Smith <x.coder.zach@gmail.com>"
 , "dependencies": 
   { "mongolian": "0.1.x"
