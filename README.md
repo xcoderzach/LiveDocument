@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/xcoderzach/LiveDocument.png)](http://travis-ci.org/xcoderzach/LiveDocument)
 LiveDocument v0.0.0
 ===================
 
